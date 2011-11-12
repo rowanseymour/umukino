@@ -14,10 +14,15 @@ var CELL_SIZE = 10;
 var CELLS_X = CANVAS_SIZE_X / CELL_SIZE;
 var CELLS_Y = CANVAS_SIZE_Y / CELL_SIZE;
 var TICK_MS = 50;
+var INIT_TAIL_SIZE = 5;
 var MOVE_UP = new Vector(0, -1);
 var MOVE_DOWN = new Vector(0, 1);
 var MOVE_LEFT = new Vector(-1, 0);
 var MOVE_RIGHT = new Vector(1, 0);
+var STATE_READY = 1;
+var STATE_RUNNING = 2;
+var STATE_PAUSED = 3;
+var STATE_FINISHED = 4;
 
 /**
  * Class for the snake
@@ -26,41 +31,91 @@ function Snake(head, length) {
 	this.head = head;
 	this.tail = new Array();
 	this.movement = MOVE_RIGHT;
+	this.dead = false;
 	
+	// Build the initial tail
 	for (var t = 1; t <= length; ++t){
 		this.tail.push(new Vector(head.x - t, head.y));
 	}
 	
+	/**
+	 * Updates the snake every frame
+	 */
 	this.tick = function(keys) {
 		// Change snake movement based on keys
-		if (37 in keys && keys[37]) {
+		if (37 in keys && keys[37] && this.movement != MOVE_RIGHT) {
 			this.movement = MOVE_LEFT;
-		} else if (38 in keys && keys[38]) {
+		} else if (38 in keys && keys[38] && this.movement != MOVE_DOWN) {
 			this.movement = MOVE_UP;
-		} else if (39 in keys && keys[39]) {
+		} else if (39 in keys && keys[39] && this.movement != MOVE_LEFT) {
 			this.movement = MOVE_RIGHT;
-		} else if (40 in keys && keys[40]) {
+		} else if (40 in keys && keys[40] && this.movement != MOVE_UP) {
 			this.movement = MOVE_DOWN;
 		}
 		
 		// Update tail
 		this.tail.pop();
-		this.tail.splice(0, 0, this.head.clone())
+		this.tail.unshift(this.head.clone());
 		
 		// Move head to new position
 		this.head = this.head.add(this.movement);
+		
+		// Wrap back into board
+		if (this.head.x >= CELLS_X)
+			this.head.x = 0;
+		if (this.head.x < 0)
+			this.head.x = CELLS_X - 1;
+		if (this.head.y >= CELLS_Y)
+			this.head.y = 0;
+		if (this.head.y < 0)
+			this.head.y = CELLS_Y - 1;
+			
+		// Check to see if we've eaten ourself
+		for (var t = 0; t < this.tail.length; ++t) {
+			if (this.head.equals(this.tail[t]))
+				this.dead = true;
+		}
 	}
 	
+	/**
+	 * Draws the snake
+	 */
 	this.draw = function(gfx) {
 		// Draw our tail first
-		gfx.fillStyle = "#999";
-		for (var t = 0; t < this.tail.length; ++t){
-			gfx.fillRect(this.tail[t].x * CELL_SIZE, this.tail[t].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-		}
+		for (var t = 0; t < this.tail.length; ++t)
+			board.drawCell(gfx, this.tail[t].x, this.tail[t].y, "#999");
 		
 		// Then the head
-		gfx.fillStyle = "#FFF";
-		gfx.fillRect(this.head.x * CELL_SIZE, this.head.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+		board.drawCell(gfx, this.head.x, this.head.y, this.dead ? "#F00" : "#FFF");
+	}
+	
+	/**
+	 * Grows the snake
+	 */
+	this.grow = function() {
+		// Duplicate the last tail cell
+		this.tail.push(this.tail[this.tail.length - 1].clone());
+	}
+}
+
+/**
+ * Item class
+ */
+function Item(position) {
+	this.position = position;
+	
+	this.draw = function(gfx) {
+		board.drawCell(gfx, this.position.x, this.position.y, "#0F0");
+	}
+}
+
+/**
+ * Board
+ */
+var board = {
+	drawCell: function(gfx, x, y, style) {
+		gfx.fillStyle = style;
+		gfx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 	}
 }
 
@@ -69,12 +124,13 @@ function Snake(head, length) {
  */
 var game = {	
 	/**
-	 * Initializes the game
+	 * Initializes the game so it's ready to start
 	 */
 	init: function() {
-		this.snake = new Snake(new Vector(CELLS_X / 2, CELLS_Y / 2), 5);
+		this.snake = new Snake(new Vector(CELLS_X / 2, CELLS_Y / 2), INIT_TAIL_SIZE);
+		this.items = new Array(new Item(this.randomFreeCell()));
 		this.keys = new Array();
-		this.paused = true;
+		this.state = STATE_READY;
 	
 		document.onkeydown = function(event) { game.keys[event.keyCode] = true; event.preventDefault(); }
 		document.onkeyup = function(event) { game.keys[event.keyCode] = false; event.preventDefault(); }
@@ -84,33 +140,69 @@ var game = {
 	},
 
 	/**
-	 * Called to update the balls and screen
+	 * Updates the game every frame
 	 */ 	
 	tick: function() {
-		// Don't do anything if game is paused
-		if (this.paused)
+		// Don't do anything if game isnt running
+		if (this.state != STATE_RUNNING)
 			return;
 			
 		this.snake.tick(this.keys);
-	
+		
+		// Has snake eaten an item?
+		for (var i = 0; i < this.items.length; ++i) {
+			var item = this.items[i];
+			if (this.snake.head.equals(item.position)) {
+				// Remove this item and add another
+				this.items.splice(i, 1);
+				this.items.push(new Item(this.randomFreeCell()));
+				
+				// Grow the snake
+				this.snake.grow();
+			
+				// Update the score
+				$('#score').html(parseInt($('#score').html()) + 1);
+			}
+		}
+		
+		// Has the snake eaten itself? If so game over
+		if (this.snake.dead) {
+			$('#pause').hide();
+			this.state = STATE_FINISHED;
+		}
+			
 		this.draw();
 		
-		setTimeout('game.tick()', TICK_MS);
+		// Request next frame if game is still running
+		if (this.state == STATE_RUNNING)
+			setTimeout('game.tick()', TICK_MS);
 	},
 	
+	/**
+	 * Starts the game
+	 */
 	start: function() {
 		this.resume();
 	},
 	
+	/**
+	 * Pauses the game
+	 */
 	pause: function() {
-		this.paused = true;
+		this.state = STATE_PAUSED;
 	},
 	
+	/**
+	 * Resumes the game
+	 */
 	resume: function() {
-		this.paused = false;
+		this.state = STATE_RUNNING;
 		setTimeout('game.tick()', TICK_MS);
 	},
 	
+	/**
+	 * Resets the game
+	 */
 	reset: function() {
 		this.init();
 	},
@@ -119,8 +211,7 @@ var game = {
 	 * Draws the canvas
 	 */
 	draw: function() {
-		var board = document.getElementById("board");  
-		var gfx = board.getContext("2d");
+		var gfx = document.getElementById("board").getContext("2d");
 		
 		// Draw board
 		gfx.fillStyle = "#000";
@@ -130,35 +221,58 @@ var game = {
 		gfx.beginPath();
 		gfx.lineWidth = 1;
 		gfx.strokeStyle = "#888";	
-		for (var x = 0; x < CELLS_X; x++){
+		for (var x = 0; x < CELLS_X; ++x) {
 			gfx.moveTo(x * CELL_SIZE, 0);
 			gfx.lineTo(x * CELL_SIZE, CANVAS_SIZE_Y);
 		}
-		for (var y = 0; y < CELLS_Y; y++){
+		for (var y = 0; y < CELLS_Y; ++y) {
 			gfx.moveTo(0, y * CELL_SIZE);
 			gfx.lineTo(CANVAS_SIZE_X, y * CELL_SIZE);
 		}	
 		gfx.stroke();
 		
+		// Draw items
+		for (var i = 0; i < this.items.length; ++i)
+			this.items[i].draw(gfx);
+		
 		// Draw the snake
 		this.snake.draw(gfx);
+	},
+	
+	/**
+	 * Returns a random free cell, i.e. not occupied by the snake or any other item 
+	 */
+	randomFreeCell: function() {
+		while (true) {
+			var randX = Math.floor(Math.random() * CELLS_X);
+			var randY = Math.floor(Math.random() * CELLS_Y);
+			return new Vector(randX, randY);
+		}
 	}
 }
 
     	</script>
     	<style type="text/css">
-    		body {
-    			background-color: black;
-    			margin: 0px;
-    			padding: 0px;
-    		}
-    		#board {
-    			border: 1px solid #888;
-    		}
-    		input {
-    			width: 100px;
-    			font-size: 16px;
-    		}
+* {
+	color: white;
+	font-family: Helvetica, sans-serif;
+}
+body {
+	background-color: black;
+	margin: 0px;
+	padding: 0px;
+}
+#board {
+	border: 1px solid #888;
+}
+input {
+	width: 100px;
+	font-size: 16px;
+	color: black;
+}
+#score {
+	font-size: 70px;
+}
     	</style>
     </head>
 	<body onload="game.init();">
@@ -180,6 +294,11 @@ var game = {
 						<input id="reset" type="button" value="Reset" style="display: none;"
 							onclick="game.reset(); $('#pause').hide(); $('#resume').hide(); $('#reset').hide(); $('#start').show();"
 						/>
+						<br />
+						<br />
+						Score
+						<br />
+						<span id="score">0</span>
 					</td>
 					<td><canvas id="board" width="500" height="500"></canvas></td>
 				</tr>
