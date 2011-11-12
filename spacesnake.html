@@ -83,7 +83,7 @@ function Snake(head, length) {
 	this.draw = function(gfx) {
 		// Draw our tail first
 		for (var t = 0; t < this.tail.length; ++t)
-			board.drawCell(gfx, this.tail[t].x, this.tail[t].y, "#999");
+			board.drawCell(gfx, this.tail[t].x, this.tail[t].y, "#d4ad68");
 		
 		// Then the head
 		board.drawCell(gfx, this.head.x, this.head.y, this.dead ? "#F00" : "#FFF");
@@ -141,7 +141,7 @@ var game = {
 
 	/**
 	 * Updates the game every frame
-	 */ 	
+	 */
 	tick: function() {
 		// Don't do anything if game isnt running
 		if (this.state != STATE_RUNNING)
@@ -160,8 +160,9 @@ var game = {
 				// Grow the snake
 				this.snake.grow();
 			
-				// Update the score
+				// Update the score and play sound
 				$('#score').html(parseInt($('#score').html()) + 1);
+				$('#snd_munch').get(0).play();
 			}
 		}
 		
@@ -183,6 +184,9 @@ var game = {
 	 */
 	start: function() {
 		this.resume();
+		$('#start').hide();
+		$('#pause').show();
+		$('#reset').show();
 	},
 	
 	/**
@@ -190,6 +194,8 @@ var game = {
 	 */
 	pause: function() {
 		this.state = STATE_PAUSED;
+		$('#pause').hide();
+		$('#resume').show();
 	},
 	
 	/**
@@ -197,6 +203,9 @@ var game = {
 	 */
 	resume: function() {
 		this.state = STATE_RUNNING;
+		$('#pause').show();
+		$('#resume').hide();
+		
 		setTimeout('game.tick()', TICK_MS);
 	},
 	
@@ -204,6 +213,12 @@ var game = {
 	 * Resets the game
 	 */
 	reset: function() {
+		$('#start').show();
+		$('#pause').hide();
+		$('#resume').hide();
+		$('#reset').hide();
+		$('#score').text("0");
+		
 		this.init();
 	},
 	
@@ -276,6 +291,7 @@ input {
     	</style>
     </head>
 	<body onload="game.init();">
+		<audio id="snd_munch" src="audio/munch.ogg" preload="auto"></audio>
 		<div align="center">
 			<table border="0" cellpadding="0" cellspacing="0" style="padding: 10px">
 				<tr>
@@ -283,16 +299,16 @@ input {
 						<img src="images/spacesnake.gif" />
 						<br />
 						<input id="start" type="button" value="Start" 
-							onclick="game.start(); $('#pause').show(); $('#reset').show(); $('#start').hide();" 
+							onclick="game.start();" 
 						/>
 						<input id="pause" type="button" value="Pause" style="display: none;" 
-							onclick="game.pause(); $('#resume').show(); $('#pause').hide();"
+							onclick="game.pause();"
 						/>
 						<input id="resume" type="button" value="Resume" style="display: none;"
-							onclick="game.resume(); $('#pause').show(); $('#resume').hide();"
+							onclick="game.resume();"
 						/>
 						<input id="reset" type="button" value="Reset" style="display: none;"
-							onclick="game.reset(); $('#pause').hide(); $('#resume').hide(); $('#reset').hide(); $('#start').show();"
+							onclick="game.reset();"
 						/>
 						<br />
 						<br />
