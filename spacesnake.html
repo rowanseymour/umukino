@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Spacesnake</title>
+		<script type="text/javascript" src="js/Vector.js"></script>
+		<script type="text/javascript">
+ 
+// Global constants   	
+var CANVAS_SIZE_X = 500;
+var CANVAS_SIZE_Y = 500;
+var CELL_SIZE = 10;
+var CELLS_X = CANVAS_SIZE_X / CELL_SIZE;
+var CELLS_Y = CANVAS_SIZE_Y / CELL_SIZE;
+var TICK_MS = 50;
+var MOVE_UP = new Vector(0, -1);
+var MOVE_DOWN = new Vector(0, 1);
+var MOVE_LEFT = new Vector(-1, 0);
+var MOVE_RIGHT = new Vector(1, 0);
+
+/**
+ * Class for the snake
+ */
+function Snake(head, length) {
+	this.head = head;
+	this.tail = new Array();
+	this.movement = MOVE_RIGHT;
+	
+	for (var t = 1; t <= length; ++t){
+		this.tail.push(new Vector(head.x - t, head.y));
+	}
+	
+	this.tick = function(keys) {
+		// Change snake movement based on keys
+		if (37 in keys && keys[37]) {
+			this.movement = MOVE_LEFT;
+		} else if (38 in keys && keys[38]) {
+			this.movement = MOVE_UP;
+		} else if (39 in keys && keys[39]) {
+			this.movement = MOVE_RIGHT;
+		} else if (40 in keys && keys[40]) {
+			this.movement = MOVE_DOWN;
+		}
+		
+		// Update tail
+		this.tail.pop();
+		this.tail.splice(0, 0, this.head.clone())
+		
+		// Move head to new position
+		this.head = this.head.add(this.movement);
+	}
+	
+	this.draw = function(gfx) {
+		// Draw our tail first
+		gfx.fillStyle = "#999";
+		for (var t = 0; t < this.tail.length; ++t){
+			gfx.fillRect(this.tail[t].x * CELL_SIZE, this.tail[t].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+		}
+		
+		// Then the head
+		gfx.fillStyle = "#FFF";
+		gfx.fillRect(this.head.x * CELL_SIZE, this.head.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+	}
+}
+
+/**
+ * Game object
+ */
+var game = {
+	snake: new Snake(new Vector(CELLS_X / 2, CELLS_Y / 2), 5),	
+	keys: new Array(),
+	paused: false,
+	
+	/**
+	 * Initializes the game
+	 */
+	init: function() {
+		document.onkeydown = function(event) { game.keys[event.keyCode] = true; event.preventDefault(); }
+		document.onkeyup = function(event) { game.keys[event.keyCode] = false; event.preventDefault(); }
+	
+		// Start animation
+		setTimeout('game.tick()', TICK_MS);
+	},
+
+	/**
+	 * Called to update the balls and screen
+	 */ 	
+	tick: function() {
+		this.snake.tick(this.keys);
+	
+		this.draw();
+		
+		if (!this.paused)
+			setTimeout('game.tick()', TICK_MS);
+	},
+	
+	pause: function() {
+		this.paused = true;
+	},
+	
+	resume: function() {
+		this.paused = false;
+		setTimeout('game.tick()', TICK_MS);
+	},
+	
+	/**
+	 * Draws the canvas
+	 */
+	draw: function() {
+		var board = document.getElementById("board");  
+		var gfx = board.getContext("2d");
+		
+		// Draw board
+		gfx.fillStyle = "#000";
+		gfx.fillRect(0, 0, CANVAS_SIZE_X, CANVAS_SIZE_Y);
+		
+		// Draw grid lines
+		gfx.beginPath();
+		gfx.lineWidth = 1;
+		gfx.strokeStyle = "#888";	
+		for (var x = 0; x < CELLS_X; x++){
+			gfx.moveTo(x * CELL_SIZE, 0);
+			gfx.lineTo(x * CELL_SIZE, CANVAS_SIZE_Y);
+		}
+		for (var y = 0; y < CELLS_Y; y++){
+			gfx.moveTo(0, y * CELL_SIZE);
+			gfx.lineTo(CANVAS_SIZE_X, y * CELL_SIZE);
+		}	
+		gfx.stroke();
+		
+		// Draw the snake
+		this.snake.draw(gfx);
+	}
+}
+
+    	</script>
+    	<style type="text/css">
+    		body {
+    			background-color: black;
+    			margin: 0px;
+    			padding: 0px;
+    		}
+    		#board {
+    			border: 1px solid #888;
+    		}
+    	</style>
+    </head>
+	<body onload="game.init();">
+		<div align="center">
+			<table border="0" cellpadding="0" cellspacing="0" style="padding: 10px">
+				<tr>
+					<td valign="top">
+						<img src="images/spacesnake.gif" />
+						<br />
+						<input type="button" value="Pause" onclick="game.pause()" />
+						<input type="button" value="Resume" onclick="game.resume()" />
+					</td>
+					<td><canvas id="board" width="500" height="500" onkeydown="onKeyDown()"></canvas></td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>
