@@ -3,6 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Snooker balls</title>
+		<script type="text/javascript" src="lib/jquery-1.7.min.js"></script>
 		<script type="text/javascript" src="js/Vector.js"></script>
 		<script type="text/javascript">
     	
@@ -12,7 +13,6 @@ var NUM_BALLS = 20;
 var BALL_RADIUS = 10;
 var balls = new Array(); 
 var colors = [ "#F00", "#F00", "#F00", "#FF0", "#F0F", "#0FF", "00F" ];
-var sndHit;
 
 /**
  * Class for ball objects which have a position and velocity
@@ -24,136 +24,139 @@ function Ball(position, velocity, color) {
 }
 
 /**
- * Initializes this simulation
+ * Game object
  */
-function init() {
-	// Create the balls
-	for (var b = 0; b < NUM_BALLS; ++b) {
-		var randPosX = (CANVAS_SIZE_X - BALL_RADIUS * 2) * Math.random() + BALL_RADIUS;
-		var randPosY = (CANVAS_SIZE_Y - BALL_RADIUS * 2) * Math.random() + BALL_RADIUS;
-		var randVelX = (Math.random() - 0.5) * 3;
-		var randVelY = (Math.random() - 0.5) * 3;
-		var randColor = colors[Math.floor(Math.random() * colors.length)];
-		balls.push(new Ball(new Vector(randPosX, randPosY), new Vector(randVelX, randVelY), randColor));
-	}
-	
-	// Start animation
-	setTimeout('tick()', 25);
-	
-	sndHit = document.getElementById("snd_hit");
-}
+var game = {
+	/**
+	 * Initializes this simulation
+	 */
+	init: function() {
+		// Create the balls
+		for (var b = 0; b < NUM_BALLS; ++b) {
+			var randPosX = (CANVAS_SIZE_X - BALL_RADIUS * 2) * Math.random() + BALL_RADIUS;
+			var randPosY = (CANVAS_SIZE_Y - BALL_RADIUS * 2) * Math.random() + BALL_RADIUS;
+			var randVelX = (Math.random() - 0.5) * 3;
+			var randVelY = (Math.random() - 0.5) * 3;
+			var randColor = colors[Math.floor(Math.random() * colors.length)];
+			balls.push(new Ball(new Vector(randPosX, randPosY), new Vector(randVelX, randVelY), randColor));
+		}
+		
+		// Start animation
+		setTimeout('game.tick()', 25);
+	},
 
-/**
- * Called to update the balls and screen
- */ 	
-function tick() {
-	for (var b1 = 0; b1 < NUM_BALLS; ++b1) {
-		var ball1 = balls[b1];
-		var ball1NewPos = ball1.position.add(ball1.velocity);
-		
-		// Check for collisions with walls
-		if (ball1NewPos.x - BALL_RADIUS < 0 || ball1NewPos.x + BALL_RADIUS > CANVAS_SIZE_X){
-  			ball1.velocity.x = -ball1.velocity.x;
-		}
-		if (ball1NewPos.y - BALL_RADIUS < 0 || ball1NewPos.y + BALL_RADIUS > CANVAS_SIZE_Y){
-  			ball1.velocity.y = -ball1.velocity.y;
-		}
-		
-		// Check for collisions with other balls
-		for (var b2 = b1 + 1; b2 < NUM_BALLS; ++b2) {		
-			var ball2 = balls[b2];
+	/**
+	 * Called to update the balls and screen
+	 */ 	
+	tick: function() {
+		for (var b1 = 0; b1 < NUM_BALLS; ++b1) {
+			var ball1 = balls[b1];
+			var ball1NewPos = ball1.position.add(ball1.velocity);
 			
-			// Check bounding boxes of new positions first
-			var ball2NewPos = ball2.position.add(ball2.velocity);
-			var delta = ball1NewPos.subtract(ball2NewPos);
-			if ((Math.abs(delta.x) < BALL_RADIUS * 2) && (Math.abs(delta.y) < BALL_RADIUS * 2)) {
+			// Check for collisions with walls
+			if (ball1NewPos.x - BALL_RADIUS < 0 || ball1NewPos.x + BALL_RADIUS > CANVAS_SIZE_X){
+	  			ball1.velocity.x = -ball1.velocity.x;
+			}
+			if (ball1NewPos.y - BALL_RADIUS < 0 || ball1NewPos.y + BALL_RADIUS > CANVAS_SIZE_Y){
+	  			ball1.velocity.y = -ball1.velocity.y;
+			}
+			
+			// Check for collisions with other balls
+			for (var b2 = b1 + 1; b2 < NUM_BALLS; ++b2) {		
+				var ball2 = balls[b2];
 				
-				// Then check distance to be more accurate (slower)
-				if (delta.length2() < (BALL_RADIUS * BALL_RADIUS * 4)) {
+				// Check bounding boxes of new positions first
+				var ball2NewPos = ball2.position.add(ball2.velocity);
+				var delta = ball1NewPos.subtract(ball2NewPos);
+				if ((Math.abs(delta.x) < BALL_RADIUS * 2) && (Math.abs(delta.y) < BALL_RADIUS * 2)) {
 					
-					// Calculate vector from first ball to second ball
-					var between = ball2.position.subtract(ball1.position);
-					var betLength = between.length();
-					var cosTh = between.x / betLength;
-					var sinTh = between.y / betLength;
-					
-					// Calculate each ball's velocity along that vector
-					var vc1 = new Vector(ball1.velocity.x * cosTh + ball1.velocity.y * sinTh, ball1.velocity.y * cosTh - ball1.velocity.x * sinTh);
-					var vc2 = new Vector(ball2.velocity.x * cosTh + ball2.velocity.y * sinTh, ball2.velocity.y * cosTh - ball2.velocity.x * sinTh);
-					// Check signs for collision (i.e. are the balls moving together or apart)
-					if ((vc1.x < 0 && vc2.x > 0) || (!vc1.x && !vc2.x))
-						continue;
+					// Then check distance to be more accurate (slower)
+					if (delta.length2() < (BALL_RADIUS * BALL_RADIUS * 4)) {
 						
-					// Calculate new velocities away from collision
-					var vc1n = new Vector(vc2.x, vc1.y);
-					var vc2n = new Vector(vc1.x, vc2.y);
-
-					// Transform velocities back into xy space
-					ball1.velocity.x = vc1n.x * cosTh - vc1n.y * sinTh;
-					ball1.velocity.y = vc1n.x * sinTh + vc1n.y * cosTh;
-				
-					ball2.velocity.x = vc2n.x * cosTh - vc2n.y * sinTh;
-					ball2.velocity.y = vc2n.x * sinTh + vc2n.y * cosTh;
+						// Calculate vector from first ball to second ball
+						var between = ball2.position.subtract(ball1.position);
+						var betLength = between.length();
+						var cosTh = between.x / betLength;
+						var sinTh = between.y / betLength;
+						
+						// Calculate each ball's velocity along that vector
+						var vc1 = new Vector(ball1.velocity.x * cosTh + ball1.velocity.y * sinTh, ball1.velocity.y * cosTh - ball1.velocity.x * sinTh);
+						var vc2 = new Vector(ball2.velocity.x * cosTh + ball2.velocity.y * sinTh, ball2.velocity.y * cosTh - ball2.velocity.x * sinTh);
+						// Check signs for collision (i.e. are the balls moving together or apart)
+						if ((vc1.x < 0 && vc2.x > 0) || (!vc1.x && !vc2.x))
+							continue;
+							
+						// Calculate new velocities away from collision
+						var vc1n = new Vector(vc2.x, vc1.y);
+						var vc2n = new Vector(vc1.x, vc2.y);
+	
+						// Transform velocities back into xy space
+						ball1.velocity.x = vc1n.x * cosTh - vc1n.y * sinTh;
+						ball1.velocity.y = vc1n.x * sinTh + vc1n.y * cosTh;
 					
-					sndHit.play();
+						ball2.velocity.x = vc2n.x * cosTh - vc2n.y * sinTh;
+						ball2.velocity.y = vc2n.x * sinTh + vc2n.y * cosTh;
+						
+						$("#snd_hit").get(0).play();
+					}
 				}
 			}
+			
+			// Update ball position based on calculated velocity 
+			ball1.position = ball1.position.add(ball1.velocity);
+		}
+	
+		this.draw();
+		
+		setTimeout('game.tick()', 25);
+	},
+	
+	/**
+	 * Draws the canvas
+	 */
+	draw: function() {
+		var canvas = document.getElementById("canvas");  
+		var gfx = canvas.getContext("2d");
+		
+		// Draw table cloth
+		gfx.fillStyle = "#070";
+		gfx.fillRect(0, 0, CANVAS_SIZE_X, CANVAS_SIZE_Y);
+		
+		// Draw ball shadows
+		for (var b = 0; b < NUM_BALLS; ++b) {
+			var ball = balls[b];
+			gfx.beginPath();
+			gfx.arc(ball.position.x + 7, ball.position.y + 7, BALL_RADIUS, 0, 2 * Math.PI, false);
+			gfx.fillStyle = "#050";
+			gfx.fill();
 		}
 		
-		// Update ball position based on calculated velocity 
-		ball1.position = ball1.position.add(ball1.velocity);
-	}
-
-	draw();
-	
-	setTimeout('tick()', 25);
-}
-
-/**
- * Draws the canvas
- */
-function draw() {
-	var canvas = document.getElementById("canvas");  
-	var gfx = canvas.getContext("2d");
-	
-	// Draw table cloth
-	gfx.fillStyle = "#070";
-	gfx.fillRect(0, 0, CANVAS_SIZE_X, CANVAS_SIZE_Y);
-	
-	// Draw ball shadows
-	for (var b = 0; b < NUM_BALLS; ++b) {
-		var ball = balls[b];
+		// Draw lines on table
 		gfx.beginPath();
-		gfx.arc(ball.position.x + 7, ball.position.y + 7, BALL_RADIUS, 0, 2 * Math.PI, false);
-		gfx.fillStyle = "#050";
-		gfx.fill();
-	}
-	
-	// Draw lines on table
-	gfx.beginPath();
-	gfx.arc(450, 150, 50, 3 * Math.PI / 2, Math.PI / 2, false);
-	gfx.closePath();
-	gfx.moveTo(450, 0);
-	gfx.lineTo(450, 300);
-	gfx.stroke();
-	
-	// Draw balls
-	for (var b = 0; b < NUM_BALLS; ++b) {
-		var ball = balls[b];
-		gfx.beginPath();
-		gfx.arc(ball.position.x, ball.position.y, BALL_RADIUS, 0, 2 * Math.PI, false);
-		gfx.fillStyle = ball.color;
-		gfx.fill();
-		gfx.beginPath();
-		gfx.arc(ball.position.x - BALL_RADIUS / 4, ball.position.y - BALL_RADIUS / 4, BALL_RADIUS / 3, 0, 2 * Math.PI, false);
-		gfx.fillStyle = "#FFF";
-		gfx.fill();
+		gfx.arc(450, 150, 50, 3 * Math.PI / 2, Math.PI / 2, false);
+		gfx.closePath();
+		gfx.moveTo(450, 0);
+		gfx.lineTo(450, 300);
+		gfx.stroke();
+		
+		// Draw balls
+		for (var b = 0; b < NUM_BALLS; ++b) {
+			var ball = balls[b];
+			gfx.beginPath();
+			gfx.arc(ball.position.x, ball.position.y, BALL_RADIUS, 0, 2 * Math.PI, false);
+			gfx.fillStyle = ball.color;
+			gfx.fill();
+			gfx.beginPath();
+			gfx.arc(ball.position.x - BALL_RADIUS / 4, ball.position.y - BALL_RADIUS / 4, BALL_RADIUS / 3, 0, 2 * Math.PI, false);
+			gfx.fillStyle = "#FFF";
+			gfx.fill();
+		}
 	}
 }
 
     	</script>
     </head>
-	<body onload="init();">
+	<body onload="game.init();">
 		<div align="center">
 			<canvas id="canvas" width="600" height="300" style="border: 7px solid #884;"></canvas>
 			<audio id="snd_hit" src="audio/snooker.ogg" preload="auto"></audio>
