@@ -1,4 +1,21 @@
+/**
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright Rowan Seymour 2011
+ */
 
+// Globals 
 var STATE_NOTREADY = 0;
 var STATE_READY = 1;
 var STATE_RUNNING = 2;
@@ -15,6 +32,7 @@ function GameRunner(game, updateMs) {
 	this.updateMs = updateMs;
 	this.state = STATE_NOTREADY;
 	this.id = ++runner_count;
+	this.timerId = 0;
 	
 	// Create a global var that references this object,
 	// which we can use in the setTimeout callback
@@ -34,10 +52,6 @@ function GameRunner(game, updateMs) {
 	 * Updates the game every frame
 	 */
 	this.update = function() {
-		// Don't do anything if game isnt running
-		if (this.state != STATE_RUNNING)
-			return;
-		
 		if (typeof this.game.update === 'function')
 			this.game.update();	
 		
@@ -61,6 +75,8 @@ function GameRunner(game, updateMs) {
 	 * Pauses the game
 	 */
 	this.pause = function() {
+		clearTimeout(this.timerId);
+		
 		this.state = STATE_PAUSED;
 		
 		$('#pause').hide();
@@ -86,6 +102,8 @@ function GameRunner(game, updateMs) {
 	 * Finishes the game
 	 */
 	this.finish = function() {
+		clearTimeout(this.timerId);
+		
 		this.state = STATE_FINISHED;
 		
 		$('#pause').hide();
@@ -98,6 +116,8 @@ function GameRunner(game, updateMs) {
 	 * Resets the game
 	 */
 	this.reset = function() {
+		clearTimeout(this.timerId);
+		
 		$('#start').show();
 		$('#pause').hide();
 		$('#resume').hide();
@@ -113,6 +133,6 @@ function GameRunner(game, updateMs) {
 	 * Requests the next update call
 	 */
 	this._requestNextUpdate = function() {
-		setTimeout("runner_" + this.id + ".update()", this.updateMs);
+		this.timerId = setTimeout("runner_" + this.id + ".update()", this.updateMs);
 	}
 }
