@@ -51,6 +51,17 @@ function GameRunner(game, updateMs) {
 	};
 	
 	/**
+	 * Starts the game
+	 */
+	this.start = function() {
+		this.resume();
+		
+		$('#start').hide();
+		$('#pause').show();
+		$('#reset').show();
+	};
+	
+	/**
 	 * Updates the game every frame
 	 */
 	this.update = function() {
@@ -60,17 +71,6 @@ function GameRunner(game, updateMs) {
 		// Request next frame if game is still running
 		if (this.state == STATE_RUNNING)
 			this._requestNextUpdate();
-	};
-	
-	/**
-	 * Starts the game
-	 */
-	this.start = function() {
-		this.resume();
-		
-		$('#start').hide();
-		$('#pause').show();
-		$('#reset').show();
 	};
 	
 	/**
