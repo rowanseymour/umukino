@@ -13,7 +13,6 @@ var CANVAS_SIZE_Y = 300;
 var NUM_BALLS = 20;
 var BALL_RADIUS = 10;
 var TICK_MS = 25;
-var balls = new Array(); 
 var colors = [ "#F00", "#F00", "#F00", "#FF0", "#F0F", "#0FF", "00F" ];
 
 /**
@@ -29,18 +28,21 @@ function Ball(position, velocity, color) {
  * Game object
  */
 var game = {
+	balls: [],
+	 
 	/**
 	 * Initializes the game
 	 */
 	init: function() {
 		// Create the balls
+		this.balls = [];
 		for (var b = 0; b < NUM_BALLS; ++b) {
 			var randPosX = (CANVAS_SIZE_X - BALL_RADIUS * 2) * Math.random() + BALL_RADIUS;
 			var randPosY = (CANVAS_SIZE_Y - BALL_RADIUS * 2) * Math.random() + BALL_RADIUS;
 			var randVelX = (Math.random() - 0.5) * 3;
 			var randVelY = (Math.random() - 0.5) * 3;
 			var randColor = colors[Math.floor(Math.random() * colors.length)];
-			balls.push(new Ball(new Vector(randPosX, randPosY), new Vector(randVelX, randVelY), randColor));
+			this.balls.push(new Ball(new Vector(randPosX, randPosY), new Vector(randVelX, randVelY), randColor));
 		}
 		
 		this.draw();
@@ -51,7 +53,7 @@ var game = {
 	 */ 	
 	update: function() {
 		for (var b1 = 0; b1 < NUM_BALLS; ++b1) {
-			var ball1 = balls[b1];
+			var ball1 = this.balls[b1];
 			var ball1NewPos = ball1.position.add(ball1.velocity);
 			
 			// Check for collisions with walls
@@ -64,7 +66,7 @@ var game = {
 			
 			// Check for collisions with other balls
 			for (var b2 = b1 + 1; b2 < NUM_BALLS; ++b2) {		
-				var ball2 = balls[b2];
+				var ball2 = this.balls[b2];
 				
 				// Check bounding boxes of new positions first
 				var ball2NewPos = ball2.position.add(ball2.velocity);
@@ -123,7 +125,7 @@ var game = {
 		
 		// Draw ball shadows
 		for (var b = 0; b < NUM_BALLS; ++b) {
-			var ball = balls[b];
+			var ball = this.balls[b];
 			var offsetX = 15 * (ball.position.x - CANVAS_SIZE_X / 2) / CANVAS_SIZE_X;
 			var offsetY = 15 * (ball.position.y - CANVAS_SIZE_Y / 2) / CANVAS_SIZE_Y;
 			gfx.beginPath();
@@ -142,7 +144,7 @@ var game = {
 		
 		// Draw balls
 		for (var b = 0; b < NUM_BALLS; ++b) {
-			var ball = balls[b];
+			var ball = this.balls[b];
 			
 			// Draw sphere
 			gfx.beginPath();
