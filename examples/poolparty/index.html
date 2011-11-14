@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<title>Snooker balls</title>
+		<title>Poolparty</title>
 		<script type="text/javascript" src="../../lib/jquery-1.7.min.js"></script>
 		<script type="text/javascript" src="../../js/Vector.js"></script>
 		<script type="text/javascript" src="../../js/GameRunner.js"></script>
@@ -110,6 +110,8 @@ var game = {
 		}
 	
 		this.draw();
+		
+		$("#fps").html(this.runner.getFPS());
 	},
 	
 	/**
@@ -122,6 +124,16 @@ var game = {
 		// Draw table cloth
 		gfx.fillStyle = "#070";
 		gfx.fillRect(0, 0, CANVAS_SIZE_X, CANVAS_SIZE_Y);
+		
+		// Draw spotlight
+		var spotGrad = gfx.createRadialGradient(CANVAS_SIZE_X / 2, CANVAS_SIZE_Y / 2, 0, CANVAS_SIZE_X / 2, CANVAS_SIZE_Y / 2, 150);
+    	spotGrad.addColorStop(0, "rgba(255,255,255,0.5)");
+    	spotGrad.addColorStop(0.25, "rgba(255,255,255,0.25)");
+    	spotGrad.addColorStop(0.5, "rgba(255,255,255,0.125)");
+    	spotGrad.addColorStop(0.75, "rgba(255,255,255,0.00625)");
+    	spotGrad.addColorStop(1, "rgba(255,255,255,0)");
+    	gfx.fillStyle = spotGrad;
+    	gfx.fillRect(0, 0, CANVAS_SIZE_X, CANVAS_SIZE_Y);
 		
 		// Draw ball shadows
 		for (var b = 0; b < NUM_BALLS; ++b) {
@@ -175,7 +187,8 @@ var runner = new GameRunner(game, TICK_MS);
 	font-family: Georgia;
 }
 body {
-	background-color: #030;
+	background-image: url(background.png);
+	background-repeat: repeat; 
 	margin: 0px;
 	padding: 0px;
 }
@@ -189,6 +202,7 @@ input {
 	<body onload="runner.init();">
 		<audio id="snd_hit" src="ballhit.ogg" preload="auto"></audio>
 		<div align="center">
+			<img src="poolparty.png" />
 			<table border="0" cellpadding="10" cellspacing="0">
 				<tr>
 					<td><canvas id="canvas" width="600" height="300" style="border: 7px solid #884;"></canvas></td>
@@ -208,6 +222,10 @@ input {
 							<input id="reset" type="button" value="Reset" style="display: none;"
 								onclick="runner.reset();"
 							/>
+							<div style="float: right">
+								FPS:
+								<span id="fps" style="font-weight: ">0</span>
+							</div>
 						</div>
 					</td>
 				</tr>

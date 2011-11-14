@@ -35,6 +35,8 @@ function GameRunner(game, updateMs) {
 	this.state = STATE_NOTREADY;
 	this.id = ++runner_count;
 	this.timerId = 0;
+	this.updatePrevTime = 0;
+	this.updateTimeAvg = 0;
 	
 	// Create a global var that references this object,
 	// which we can use in the setTimeout callback
@@ -71,6 +73,16 @@ function GameRunner(game, updateMs) {
 		// Request next frame if game is still running
 		if (this.state == STATE_RUNNING)
 			this._requestNextUpdate();
+		
+		// Calculate smoothed frame update time
+		var updateTime = (new Date()).getTime();
+		if (this.updatePrevTime > 0) {
+			if (this.updateTimeAvg > 0)
+				this.updateTimeAvg = this.updateTimeAvg * 0.95 + (updateTime - this.updatePrevTime) * 0.05;
+			else 
+				this.updateTimeAvg = updateTime - this.updatePrevTime;
+		}
+		this.updatePrevTime = updateTime;
 	};
 	
 	/**
@@ -129,6 +141,13 @@ function GameRunner(game, updateMs) {
 			this.game.reset();
 		
 		this.init();
+	};
+	
+	/**
+	 * Calulates the smoothed FPS
+	 */
+	this.getFPS = function() {
+		return this.updateTimeAvg == 0 ? 0 : Math.floor(1000 / this.updateTimeAvg);
 	};
 	
 	/**

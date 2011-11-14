@@ -198,6 +198,8 @@ var game = {
 			this.runner.finish();
 			
 		this.draw();
+		
+		$("#fps").html(this.runner.getFPS());
 	},
 	
 	/**
@@ -295,6 +297,10 @@ input {
 							<input id="reset" type="button" value="Reset" style="display: none;"
 								onclick="runner.reset();"
 							/>
+							<div style="float: right">
+								FPS:
+								<span id="fps" style="font-weight: bold">0</span>
+							</div>
 						</div>
 						<br />
 						Score
