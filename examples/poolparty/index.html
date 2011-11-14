@@ -42,6 +42,8 @@ var game = {
 			var randColor = colors[Math.floor(Math.random() * colors.length)];
 			balls.push(new Ball(new Vector(randPosX, randPosY), new Vector(randVelX, randVelY), randColor));
 		}
+		
+		this.draw();
 	},
 
 	/**
@@ -122,9 +124,11 @@ var game = {
 		// Draw ball shadows
 		for (var b = 0; b < NUM_BALLS; ++b) {
 			var ball = balls[b];
+			var offsetX = 15 * (ball.position.x - CANVAS_SIZE_X / 2) / CANVAS_SIZE_X;
+			var offsetY = 15 * (ball.position.y - CANVAS_SIZE_Y / 2) / CANVAS_SIZE_Y;
 			gfx.beginPath();
-			gfx.arc(ball.position.x + 7, ball.position.y + 7, BALL_RADIUS, 0, 2 * Math.PI, false);
-			gfx.fillStyle = "#050";
+			gfx.arc(ball.position.x + offsetX, ball.position.y + offsetY, BALL_RADIUS, 0, 2 * Math.PI, false);
+			gfx.fillStyle = "rgba(0, 0, 0, 0.3)";
 			gfx.fill();
 		}
 		
@@ -139,13 +143,19 @@ var game = {
 		// Draw balls
 		for (var b = 0; b < NUM_BALLS; ++b) {
 			var ball = balls[b];
+			
+			// Draw sphere
 			gfx.beginPath();
 			gfx.arc(ball.position.x, ball.position.y, BALL_RADIUS, 0, 2 * Math.PI, false);
 			gfx.fillStyle = ball.color;
 			gfx.fill();
+			
+			// Draw highlight
+			var offsetX = 5 * (ball.position.x - CANVAS_SIZE_X / 2) / CANVAS_SIZE_X;
+			var offsetY = 5 * (ball.position.y - CANVAS_SIZE_Y / 2) / CANVAS_SIZE_Y;
 			gfx.beginPath();
-			gfx.arc(ball.position.x - BALL_RADIUS / 4, ball.position.y - BALL_RADIUS / 4, BALL_RADIUS / 3, 0, 2 * Math.PI, false);
-			gfx.fillStyle = "#FFF";
+			gfx.arc(ball.position.x - offsetX, ball.position.y - offsetY, BALL_RADIUS / 3, 0, 2 * Math.PI, false);
+			gfx.fillStyle = "rgba(255, 255, 255, 0.75)";
 			gfx.fill();
 		}
 	}
@@ -174,7 +184,7 @@ input {
 }
     	</style>
     </head>
-	<body onload="runner.init(); runner.start();">
+	<body onload="runner.init();">
 		<audio id="snd_hit" src="ballhit.ogg" preload="auto"></audio>
 		<div align="center">
 			<table border="0" cellpadding="10" cellspacing="0">
