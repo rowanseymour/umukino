@@ -46,8 +46,8 @@ function GameRunner(game, updateMs) {
 	 * Initializes the game so it's ready to start
 	 */
 	this.init = function() {
-		if (typeof this.game.init === 'function')
-			this.game.init();
+		if (typeof this.game.onInit === 'function')
+			this.game.onInit();
 		
 		this.state = STATE_READY;
 	};
@@ -67,8 +67,8 @@ function GameRunner(game, updateMs) {
 	 * Updates the game every frame
 	 */
 	this.update = function() {
-		if (typeof this.game.update === 'function')
-			this.game.update();	
+		if (typeof this.game.onUpdate === 'function')
+			this.game.onUpdate();	
 		
 		// Request next frame if game is still running
 		if (this.state == STATE_RUNNING)
@@ -96,14 +96,17 @@ function GameRunner(game, updateMs) {
 		$('#pause').hide();
 		$('#resume').show();
 		
-		if (typeof this.game.pause === 'function')
-			this.game.pause();	
+		if (typeof this.game.onPause === 'function')
+			this.game.onPause();	
 	};
 	
 	/**
 	 * Resumes the game
 	 */
 	this.resume = function() {
+		if (typeof this.game.onResume === 'function')
+			this.game.onResume();	
+			
 		this.state = STATE_RUNNING;
 		
 		$('#pause').show();
@@ -122,8 +125,8 @@ function GameRunner(game, updateMs) {
 		
 		$('#pause').hide();
 		
-		if (typeof this.game.finish === 'function')
-			this.game.finish();
+		if (typeof this.game.onFinish === 'function')
+			this.game.onFinish();
 	}
 	
 	/**
@@ -137,8 +140,8 @@ function GameRunner(game, updateMs) {
 		$('#resume').hide();
 		$('#reset').hide();
 		
-		if (typeof this.game.reset === 'function')
-			this.game.reset();
+		if (typeof this.game.onReset === 'function')
+			this.game.onReset();
 		
 		this.init();
 	};

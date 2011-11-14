@@ -5,6 +5,7 @@
 		<title>Spacesnake</title>
 		<script type="text/javascript" src="../../lib/jquery-1.7.min.js"></script>
 		<script type="text/javascript" src="../../js/Vector.js"></script>
+		<script type="text/javascript" src="../../js/Resources.js"></script>
 		<script type="text/javascript" src="../../js/GameRunner.js"></script>
 		<script type="text/javascript">
  
@@ -154,17 +155,20 @@ var board = {
  */
 var game = {
 	items: [],
+	sndHit: new Audio("munch.ogg"),
 		
 	/**
 	 * Initializes the game so it's ready to start
 	 */
-	init: function() {
+	onInit: function() {
 		this.snake = new Snake(new Vector(CELLS_X / 2, CELLS_Y / 2), INIT_TAIL_SIZE);
 		this.items = new Array(new Item(this.randomFreeCell()));
 		this.keys = new Array();
 	
 		document.onkeydown = function(event) { game.keys[event.keyCode] = true; event.preventDefault(); }
 		document.onkeyup = function(event) { game.keys[event.keyCode] = false; event.preventDefault(); }
+		
+		this.sndHit.load();
 		
 		// Draw the initialized game
 		this.draw();
@@ -173,7 +177,7 @@ var game = {
 	/**
 	 * Updates the game every frame
 	 */
-	update: function() {	
+	onUpdate: function() {	
 		this.snake.tick(this.keys);
 		
 		// Has snake eaten an item?
@@ -189,7 +193,7 @@ var game = {
 			
 				// Update the score and play sound
 				$('#score').html(parseInt($('#score').html()) + 1);
-				$('#snd_munch').get(0).play();
+				this.sndHit.play();
 			}
 		}
 		
@@ -202,10 +206,14 @@ var game = {
 		$("#fps").html(this.runner.getFPS());
 	},
 	
+	onResume: function() {
+		this.sndHit.play();
+	},
+	
 	/**
 	 * Resets the game
 	 */
-	reset: function() {
+	onReset: function() {
 		$('#score').text("0");
 	},
 	
@@ -247,6 +255,10 @@ var game = {
 	}
 }
 
+//var resources = new Resources(function() { alert("Loaded!"); });
+//resources.addAudio("munch", "munch.ogg");
+//resources.load();
+
 /**
  * The runner which will control the game
  */
@@ -277,7 +289,6 @@ input {
     	</style>
     </head>
 	<body onload="runner.init();">
-		<audio id="snd_munch" src="munch.ogg" preload="auto"></audio>
 		<div align="center">
 			<table border="0" cellpadding="10" cellspacing="0">
 				<tr>
