@@ -6,7 +6,7 @@
 		<script type="text/javascript" src="../../lib/jquery-1.7.min.js"></script>
 		<script type="text/javascript" src="../../js/Vector.js"></script>
 		<script type="text/javascript" src="../../js/Resources.js"></script>
-		<script type="text/javascript" src="../../js/GameRunner.js"></script>
+		<script type="text/javascript" src="../../js/Controller.js"></script>
 		<script type="text/javascript">
  
 // Globals   	
@@ -196,11 +196,11 @@ var game = {
 		
 		// Has the snake eaten itself? If so game over
 		if (this.snake.dead)
-			this.runner.finish();
+			this.controller.finish();
 			
 		this.draw();
 		
-		$("#fps").html(this.runner.getFPS());
+		$("#fps").html(this.controller.getFPS());
 	},
 	
 	/**
@@ -255,7 +255,7 @@ resources.load();
 /**
  * The runner which will control the game
  */
-var runner = new GameRunner(game, TICK_MS); 
+var controller = new Controller(game, TICK_MS); 
 
     	</script>
     	<style type="text/css">
@@ -281,7 +281,7 @@ input {
 }
     	</style>
     </head>
-	<body onload="runner.init();">
+	<body onload="controller.init();">
 		<div align="center">
 			<table border="0" cellpadding="10" cellspacing="0">
 				<tr>
@@ -290,16 +290,16 @@ input {
 						<br />
 						<div style="background-color: #444; padding: 5px; border-radius: 3px;">
 							<input id="start" type="button" value="Start" 
-								onclick="runner.start();" 
+								onclick="controller.start();" 
 							/>
 							<input id="pause" type="button" value="Pause" style="display: none;" 
-								onclick="runner.pause();"
+								onclick="controller.pause();"
 							/>
 							<input id="resume" type="button" value="Resume" style="display: none;"
-								onclick="runner.resume();"
+								onclick="controller.resume();"
 							/>
 							<input id="reset" type="button" value="Reset" style="display: none;"
-								onclick="runner.reset();"
+								onclick="controller.reset();"
 							/>
 							<div style="float: right">
 								FPS:

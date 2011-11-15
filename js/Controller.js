@@ -23,24 +23,24 @@ var STATE_READY = 1;
 var STATE_RUNNING = 2;
 var STATE_PAUSED = 3;
 var STATE_FINISHED = 4;
-var runner_count = 0;
+var controller_count = 0;
 
 /**
- * Creates a game runner for the given game
+ * Creates a game controller for the given game
  */
-function GameRunner(game, updateMs) {
+function Controller(game, updateMs) {
 	this.game = game;
-	this.game.runner = this;
+	this.game.controller = this;
 	this.updateMs = updateMs;
 	this.state = STATE_NOTREADY;
-	this.id = ++runner_count;
+	this.id = ++controller_count;
 	this.timerId = 0;
 	this.updatePrevTime = 0;
 	this.updateTimeAvg = 0;
 	
 	// Create a global var that references this object,
 	// which we can use in the setTimeout callback
-	eval("runner_" + this.id + " = this;");
+	eval("controller_" + this.id + " = this;");
 	
 	/**
 	 * Initializes the game so it's ready to start
@@ -157,6 +157,6 @@ function GameRunner(game, updateMs) {
 	 * Requests the next update call
 	 */
 	this._requestNextUpdate = function() {
-		this.timerId = setTimeout("runner_" + this.id + ".update()", this.updateMs);
+		this.timerId = setTimeout("controller_" + this.id + ".update()", this.updateMs);
 	}
 }
