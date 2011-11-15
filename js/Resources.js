@@ -27,6 +27,9 @@ function Resources(onLoaded) {
 	this.loadedCount = 0;
 	this.onLoaded = onLoaded;
 
+	/**
+	 * Adds an audio resource
+	 */
 	this.addAudio = function(key, src) {
 		this.audio[key] = new Audio();
 		this.audio[key].preload = 'none';
@@ -34,6 +37,9 @@ function Resources(onLoaded) {
 		++this.count;
 	};
 	
+	/**
+	 * Loads all resources
+	 */
 	this.load = function() {
 		this.loadedCount = 0;
 		
@@ -45,17 +51,28 @@ function Resources(onLoaded) {
 		}
 	};
 	
-	this._bindEvent = function(elem, evName, callback){
-		return elem.addEventListener(evName, function listener() {
-			elem.removeEventListener(evName, listener);
-			return callback.apply(this, arguments);
+	/**
+	 * Binds a callback to an event on a DOM element, so that it will
+	 * only be called once and will get this loader as an argument
+	 */
+	this._bindEvent = function(elem, name, callback, arguments) {
+		// Thanks to Javascript weirdness, the callback might not get this object
+		// as it's this reference, so we have to explicitly pass it as an argument
+		var loader = this;
+		
+		return elem.addEventListener(name, function listener() {
+			elem.removeEventListener(name, listener);
+			return callback.apply(this, [loader]);
 		}, true);
 	};
 	
-	this._onResourceLoad = function() {
-		++this.loadedCount;
+	/**
+	 * Called when a resource has been loaded
+	 */
+	this._onResourceLoad = function(loader) {		
+		++loader.loadedCount;
 		
-		if (this.loadedCount == this.count)
-			this.onLoaded();
+		if (loader.loadedCount == loader.count)
+			loader.onLoaded();
 	};
 }

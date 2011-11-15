@@ -155,7 +155,6 @@ var board = {
  */
 var game = {
 	items: [],
-	sndHit: new Audio("munch.ogg"),
 		
 	/**
 	 * Initializes the game so it's ready to start
@@ -167,8 +166,6 @@ var game = {
 	
 		document.onkeydown = function(event) { game.keys[event.keyCode] = true; event.preventDefault(); }
 		document.onkeyup = function(event) { game.keys[event.keyCode] = false; event.preventDefault(); }
-		
-		this.sndHit.load();
 		
 		// Draw the initialized game
 		this.draw();
@@ -193,7 +190,7 @@ var game = {
 			
 				// Update the score and play sound
 				$('#score').html(parseInt($('#score').html()) + 1);
-				this.sndHit.play();
+				resources.audio.munch.play();
 			}
 		}
 		
@@ -204,10 +201,6 @@ var game = {
 		this.draw();
 		
 		$("#fps").html(this.runner.getFPS());
-	},
-	
-	onResume: function() {
-		this.sndHit.play();
 	},
 	
 	/**
@@ -255,9 +248,9 @@ var game = {
 	}
 }
 
-//var resources = new Resources(function() { alert("Loaded!"); });
-//resources.addAudio("munch", "munch.ogg");
-//resources.load();
+var resources = new Resources(function() { console.log("Resources loaded"); });
+resources.addAudio("munch", "munch.ogg");
+resources.load();
 
 /**
  * The runner which will control the game
