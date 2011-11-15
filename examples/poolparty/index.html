@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Poolparty</title>
@@ -16,7 +16,7 @@ var TICK_MS = 25;
 var colors = [ "#F00", "#F00", "#F00", "#FF0", "#F0F", "#0FF", "00F" ];
 
 /**
- * Class for ball objects which have a position and velocity
+ * Ball objects which have a position and velocity
  */
 function Ball(position, velocity, color) {
 	this.position = position;
@@ -25,7 +25,7 @@ function Ball(position, velocity, color) {
 }
 
 /**
- * Game object
+ * Game content
  */
 var poolparty = {
 	balls: [],
@@ -176,7 +176,7 @@ var poolparty = {
 }
 
 /**
- * The runner which will control the game
+ * Game host
  */
 var game = new Game(poolparty, TICK_MS); 
 

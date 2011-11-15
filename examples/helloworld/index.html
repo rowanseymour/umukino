@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Helloworld</title>
+		<script type="text/javascript" src="../../lib/jquery-1.7.min.js"></script>
+		<script type="text/javascript" src="../../js/Game.js"></script>
+		<script type="text/javascript">
+    	
+var CANVAS_SIZE_X = 400;
+var CANVAS_SIZE_Y = 200;
+var TICK_MS = 200;
+
+/**
+ * Game content
+ */
+var helloworld = {
+	frame: 0,
+	
+	/**
+	 * Initializes the game
+	 */
+	onInit: function() {	
+		this.draw();
+	},
+
+	/**
+	 * Updates the game every frame
+	 */ 	
+	onUpdate: function() {
+		++this.frame;
+		this.draw();
+	},
+	
+	/**
+	 * Draws the canvas
+	 */
+	draw: function() {
+		var canvas = document.getElementById("canvas");  
+		var gfx = canvas.getContext("2d");
+		gfx.font = "20pt Courier";
+		
+		// Draw  background
+		gfx.fillStyle = "#000";
+		gfx.fillRect(0, 0, CANVAS_SIZE_X, CANVAS_SIZE_Y);
+		
+		// Draw text on even frames only
+		if (this.frame % 2 == 0) {
+			gfx.fillStyle = "#FFF";
+			gfx.fillText("Hello world!", 5, 30);
+		}
+	}
+}
+
+/**
+ * Game host
+ */
+var game = new Game(helloworld, TICK_MS); 
+
+    	</script>
+    </head>
+	<body onload="game.init();">
+		<div align="center">
+			<table border="0" cellpadding="10" cellspacing="0">
+				<tr>
+					<td><canvas id="canvas" width="400" height="200"></canvas></td>
+				</tr>
+				<tr>
+					<td>
+						<div style="background-color: #777; padding: 5px; border-radius: 3px;">
+							<input id="start" type="button" value="Start" 
+								onclick="game.start();" 
+							/>
+							<input id="pause" type="button" value="Pause" style="display: none;" 
+								onclick="game.pause();"
+							/>
+							<input id="resume" type="button" value="Resume" style="display: none;"
+								onclick="game.resume();"
+							/>
+							<input id="reset" type="button" value="Reset" style="display: none;"
+								onclick="game.reset();"
+							/>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>
