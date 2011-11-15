@@ -5,7 +5,7 @@
 		<title>Poolparty</title>
 		<script type="text/javascript" src="../../lib/jquery-1.7.min.js"></script>
 		<script type="text/javascript" src="../../js/Vector.js"></script>
-		<script type="text/javascript" src="../../js/Controller.js"></script>
+		<script type="text/javascript" src="../../js/Game.js"></script>
 		<script type="text/javascript">
     	
 var CANVAS_SIZE_X = 600;
@@ -27,7 +27,7 @@ function Ball(position, velocity, color) {
 /**
  * Game object
  */
-var game = {
+var poolparty = {
 	balls: [],
 	 
 	/**
@@ -111,7 +111,7 @@ var game = {
 	
 		this.draw();
 		
-		$("#fps").html(this.controller.getFPS());
+		$("#fps").html(this.host.getFPS());
 	},
 	
 	/**
@@ -178,7 +178,7 @@ var game = {
 /**
  * The runner which will control the game
  */
-var controller = new Controller(game, TICK_MS); 
+var game = new Game(poolparty, TICK_MS); 
 
     	</script>
     	<style type="text/css">
@@ -199,7 +199,7 @@ input {
 }
     	</style>
     </head>
-	<body onload="controller.init();">
+	<body onload="game.init();">
 		<audio id="snd_hit" src="ballhit.ogg" preload="auto"></audio>
 		<div align="center">
 			<img src="poolparty.png" />
@@ -211,16 +211,16 @@ input {
 					<td>
 						<div style="background-color: #252; padding: 5px; border-radius: 3px;">
 							<input id="start" type="button" value="Start" 
-								onclick="controller.start();" 
+								onclick="game.start();" 
 							/>
 							<input id="pause" type="button" value="Pause" style="display: none;" 
-								onclick="controller.pause();"
+								onclick="game.pause();"
 							/>
 							<input id="resume" type="button" value="Resume" style="display: none;"
-								onclick="controller.resume();"
+								onclick="game.resume();"
 							/>
 							<input id="reset" type="button" value="Reset" style="display: none;"
-								onclick="controller.reset();"
+								onclick="game.reset();"
 							/>
 							<div style="float: right">
 								FPS:

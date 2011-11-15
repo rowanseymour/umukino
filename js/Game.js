@@ -23,31 +23,36 @@ var STATE_READY = 1;
 var STATE_RUNNING = 2;
 var STATE_PAUSED = 3;
 var STATE_FINISHED = 4;
-var controller_count = 0;
+var game_count = 0;
 
 /**
- * Creates a game controller for the given game
+ * Creates a game from the given content
  */
-function Controller(game, updateMs) {
-	this.game = game;
-	this.game.controller = this;
+function Game(content, updateMs) {
+	this.content = content;
+	this.content.host = this;
 	this.updateMs = updateMs;
 	this.state = STATE_NOTREADY;
-	this.id = ++controller_count;
+	this.id = ++game_count;
 	this.timerId = 0;
 	this.updatePrevTime = 0;
 	this.updateTimeAvg = 0;
+	this.keys = new Array();
 	
 	// Create a global var that references this object,
 	// which we can use in the setTimeout callback
-	eval("controller_" + this.id + " = this;");
+	eval("game_" + this.id + " = this;");
 	
 	/**
 	 * Initializes the game so it's ready to start
 	 */
 	this.init = function() {
-		if (typeof this.game.onInit === 'function')
-			this.game.onInit();
+		if (typeof this.content.onInit === 'function')
+			this.content.onInit();
+			
+		var game = this;		
+		document.onkeydown = function(event) { game.keys[event.keyCode] = true; event.preventDefault(); }
+		document.onkeyup = function(event) { game.keys[event.keyCode] = false; event.preventDefault(); }
 		
 		this.state = STATE_READY;
 	};
@@ -67,8 +72,8 @@ function Controller(game, updateMs) {
 	 * Updates the game every frame
 	 */
 	this.update = function() {
-		if (typeof this.game.onUpdate === 'function')
-			this.game.onUpdate();	
+		if (typeof this.content.onUpdate === 'function')
+			this.content.onUpdate();	
 		
 		// Request next frame if game is still running
 		if (this.state == STATE_RUNNING)
@@ -96,16 +101,16 @@ function Controller(game, updateMs) {
 		$('#pause').hide();
 		$('#resume').show();
 		
-		if (typeof this.game.onPause === 'function')
-			this.game.onPause();	
+		if (typeof this.content.onPause === 'function')
+			this.content.onPause();	
 	};
 	
 	/**
 	 * Resumes the game
 	 */
 	this.resume = function() {
-		if (typeof this.game.onResume === 'function')
-			this.game.onResume();	
+		if (typeof this.content.onResume === 'function')
+			this.content.onResume();	
 			
 		this.state = STATE_RUNNING;
 		
@@ -125,8 +130,8 @@ function Controller(game, updateMs) {
 		
 		$('#pause').hide();
 		
-		if (typeof this.game.onFinish === 'function')
-			this.game.onFinish();
+		if (typeof this.content.onFinish === 'function')
+			this.content.onFinish();
 	}
 	
 	/**
@@ -140,8 +145,8 @@ function Controller(game, updateMs) {
 		$('#resume').hide();
 		$('#reset').hide();
 		
-		if (typeof this.game.onReset === 'function')
-			this.game.onReset();
+		if (typeof this.content.onReset === 'function')
+			this.content.onReset();
 		
 		this.init();
 	};
@@ -157,6 +162,6 @@ function Controller(game, updateMs) {
 	 * Requests the next update call
 	 */
 	this._requestNextUpdate = function() {
-		this.timerId = setTimeout("controller_" + this.id + ".update()", this.updateMs);
+		this.timerId = setTimeout("game_" + this.id + ".update()", this.updateMs);
 	}
 }
