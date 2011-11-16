@@ -6,6 +6,7 @@
 		<script type="text/javascript" src="../../lib/jquery-1.7.min.js"></script>
 		<script type="text/javascript" src="../../js/Vector.js"></script>
 		<script type="text/javascript" src="../../js/Game.js"></script>
+		<script type="text/javascript" src="Ball.js"></script>
 		<script type="text/javascript">
     	
 var CANVAS_SIZE_X = 600;
@@ -16,18 +17,10 @@ var TICK_MS = 25;
 var colors = [ "#F00", "#F00", "#F00", "#FF0", "#F0F", "#0FF", "00F" ];
 
 /**
- * Ball objects which have a position and velocity
- */
-function Ball(position, velocity, color) {
-	this.position = position;
-	this.velocity = velocity;
-	this.color = color;
-}
-
-/**
  * Game content
  */
 var poolparty = {
+	spotlight: new Vector(CANVAS_SIZE_X / 2, CANVAS_SIZE_Y / 2),
 	balls: [],
 	 
 	/**
@@ -39,8 +32,8 @@ var poolparty = {
 		for (var b = 0; b < NUM_BALLS; ++b) {
 			var randPosX = (CANVAS_SIZE_X - BALL_RADIUS * 2) * Math.random() + BALL_RADIUS;
 			var randPosY = (CANVAS_SIZE_Y - BALL_RADIUS * 2) * Math.random() + BALL_RADIUS;
-			var randVelX = (Math.random() - 0.5) * 3;
-			var randVelY = (Math.random() - 0.5) * 3;
+			var randVelX = (Math.random() - 0.5) * 6;
+			var randVelY = (Math.random() - 0.5) * 6;
 			var randColor = colors[Math.floor(Math.random() * colors.length)];
 			this.balls.push(new Ball(new Vector(randPosX, randPosY), new Vector(randVelX, randVelY), randColor));
 		}
@@ -52,6 +45,11 @@ var poolparty = {
 	 * Updates the game every frame
 	 */ 	
 	onUpdate: function() {
+		// Update spotlight
+		this.spotlight.x = Math.floor(CANVAS_SIZE_X / 2 + 30 * Math.sin(this.host.updateCount / 20));
+		this.spotlight.y = Math.floor(CANVAS_SIZE_Y / 2 + 30 * Math.cos(123 + this.host.updateCount / 30));
+	
+		// Update balls
 		for (var b1 = 0; b1 < NUM_BALLS; ++b1) {
 			var ball1 = this.balls[b1];
 			var ball1NewPos = ball1.position.add(ball1.velocity);
@@ -108,6 +106,8 @@ var poolparty = {
 			// Update ball position based on calculated velocity 
 			ball1.position = ball1.position.add(ball1.velocity);
 		}
+		
+		this._applyFriction(1.5);
 	
 		this.draw();
 		
@@ -125,8 +125,13 @@ var poolparty = {
 		gfx.fillStyle = "#070";
 		gfx.fillRect(0, 0, CANVAS_SIZE_X, CANVAS_SIZE_Y);
 		
+		// Draw ball shadows
+		for (var b = 0; b < NUM_BALLS; ++b) {
+			this.balls[b].drawShadow(gfx);
+		}
+		
 		// Draw spotlight
-		var spotGrad = gfx.createRadialGradient(CANVAS_SIZE_X / 2, CANVAS_SIZE_Y / 2, 0, CANVAS_SIZE_X / 2, CANVAS_SIZE_Y / 2, 150);
+		var spotGrad = gfx.createRadialGradient(this.spotlight.x, this.spotlight.y, 0, this.spotlight.x, this.spotlight.y, 150);
     	spotGrad.addColorStop(0, "rgba(255,255,255,0.5)");
     	spotGrad.addColorStop(0.25, "rgba(255,255,255,0.25)");
     	spotGrad.addColorStop(0.5, "rgba(255,255,255,0.125)");
@@ -134,17 +139,6 @@ var poolparty = {
     	spotGrad.addColorStop(1, "rgba(255,255,255,0)");
     	gfx.fillStyle = spotGrad;
     	gfx.fillRect(0, 0, CANVAS_SIZE_X, CANVAS_SIZE_Y);
-		
-		// Draw ball shadows
-		for (var b = 0; b < NUM_BALLS; ++b) {
-			var ball = this.balls[b];
-			var offsetX = 15 * (ball.position.x - CANVAS_SIZE_X / 2) / CANVAS_SIZE_X;
-			var offsetY = 15 * (ball.position.y - CANVAS_SIZE_Y / 2) / CANVAS_SIZE_Y;
-			gfx.beginPath();
-			gfx.arc(ball.position.x + offsetX, ball.position.y + offsetY, BALL_RADIUS, 0, 2 * Math.PI, false);
-			gfx.fillStyle = "rgba(0, 0, 0, 0.3)";
-			gfx.fill();
-		}
 		
 		// Draw lines on table
 		gfx.beginPath();
@@ -156,22 +150,30 @@ var poolparty = {
 		
 		// Draw balls
 		for (var b = 0; b < NUM_BALLS; ++b) {
+			this.balls[b].draw(gfx);
+		}
+	},
+	
+	/** 
+	 * Applies friction to slow the balls and returns whether all the balls have stopped moving
+	 */
+	_applyFriction: function(minSpeed) {
+		var minSpeed2 = minSpeed * minSpeed;
+		var allStopped = true;
+		for (var b = 0; b < NUM_BALLS; ++b) {
 			var ball = this.balls[b];
 			
-			// Draw sphere
-			gfx.beginPath();
-			gfx.arc(ball.position.x, ball.position.y, BALL_RADIUS, 0, 2 * Math.PI, false);
-			gfx.fillStyle = ball.color;
-			gfx.fill();
+			// Scale velocity
+			ball.velocity = ball.velocity.scale(0.99);
 			
-			// Draw highlight
-			var offsetX = 5 * (ball.position.x - CANVAS_SIZE_X / 2) / CANVAS_SIZE_X;
-			var offsetY = 5 * (ball.position.y - CANVAS_SIZE_Y / 2) / CANVAS_SIZE_Y;
-			gfx.beginPath();
-			gfx.arc(ball.position.x - offsetX, ball.position.y - offsetY, BALL_RADIUS / 3, 0, 2 * Math.PI, false);
-			gfx.fillStyle = "rgba(255, 255, 255, 0.75)";
-			gfx.fill();
+			// Apply min speed threshold
+			if (ball.velocity.length2 < minSpeed2) {
+				ball.velocity = new Vector(0, 0);
+			} else {
+				allStopped = false;
+			}
 		}
+		return allStopped;
 	}
 }
 
