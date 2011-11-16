@@ -105,8 +105,10 @@ var spacesnake = {
 		}
 		
 		// Has the snake eaten itself? If so game over
-		if (this.snake.dead)
+		if (this.snake.dead) {
+			resources.audio.explosion.play();
 			this.host.finish();
+		}
 			
 		this.draw();
 		
@@ -160,6 +162,7 @@ var spacesnake = {
 
 var resources = new Resources(function() { console.log("Resources loaded"); });
 resources.addAudio("munch", "munch.ogg");
+resources.addAudio("explosion", "explosion.ogg");
 resources.load();
 
 /**
