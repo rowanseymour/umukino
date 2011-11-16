@@ -31,7 +31,7 @@ var game_count = 0;
 function Game(content, updateMs) {
 	this.content = content;
 	this.content.host = this;
-	this.updateCount = 0;
+	this.time = new Date().getTime();
 	this.updateMs = updateMs;
 	this.state = STATE_NOTREADY;
 	this.id = ++game_count;
@@ -73,7 +73,8 @@ function Game(content, updateMs) {
 	 * Updates the game every frame
 	 */
 	this.update = function() {
-		++this.updateCount;
+		// Get the timestamp for this update
+		this.time = new Date().getTime();
 		
 		if (typeof this.content.onUpdate === 'function')
 			this.content.onUpdate();	

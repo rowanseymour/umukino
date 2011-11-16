@@ -46,8 +46,8 @@ var poolparty = {
 	 */ 	
 	onUpdate: function() {
 		// Update spotlight
-		this.spotlight.x = Math.floor(CANVAS_SIZE_X / 2 + 30 * Math.sin(this.host.updateCount / 20));
-		this.spotlight.y = Math.floor(CANVAS_SIZE_Y / 2 + 30 * Math.cos(123 + this.host.updateCount / 30));
+		this.spotlight.x = Math.floor(CANVAS_SIZE_X / 2 + 30 * Math.sin(this.host.time / 200));
+		this.spotlight.y = Math.floor(CANVAS_SIZE_Y / 2 + 30 * Math.cos(123 + this.host.time / 300));
 	
 		// Update balls
 		for (var b1 = 0; b1 < NUM_BALLS; ++b1) {
