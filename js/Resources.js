@@ -21,19 +21,25 @@
  * Class for loading and managing resources
  */
 function Resources(onLoaded) {
-	this.image = new Object();
-	this.audio = new Object();
+	this.imagePaths = new Array();
+	this.audioPaths = new Array();
 	this.count = 0
 	this.loadedCount = 0;
 	this.onLoaded = onLoaded;
+	
+	/**
+	 * Adds an image resource
+	 */
+	this.addImage = function(key, src) {
+		this.imagePaths.push([key, src]);
+		++this.count;
+	};
 
 	/**
 	 * Adds an audio resource
 	 */
 	this.addAudio = function(key, src) {
-		this.audio[key] = new Audio();
-		this.audio[key].preload = 'none';
-		this.audio[key].src = src;
+		this.audioPaths.push([key, src]);
 		++this.count;
 	};
 	
@@ -42,12 +48,25 @@ function Resources(onLoaded) {
 	 */
 	this.load = function() {
 		this.loadedCount = 0;
+		this.image = new Object();
+		this.audio = new Object();
+		
+		// Load all image resources
+		for (var a = 0; a < this.imagePaths.length; ++a) {
+			var key = this.imagePaths[a][0];
+			var src = this.imagePaths[a][1];		
+			this.image[key] = new Image(src);		
+			this._bindEvent(this.image[key], "onload", this._onResourceLoad);
+			this.image[key].load();
+		}
 		
 		// Load all audio resources
-		for (var key in this.audio) {
-			var a = this.audio[key];
-			this._bindEvent(a, "canplaythrough", this._onResourceLoad);
-			a.load();
+		for (var a = 0; a < this.audioPaths.length; ++a) {
+			var key = this.audioPaths[a][0];
+			var src = this.audioPaths[a][1];		
+			this.audio[key] = new Audio(src);		
+			this._bindEvent(this.audio[key], "canplaythrough", this._onResourceLoad);
+			this.audio[key].load();
 		}
 	};
 	
@@ -72,7 +91,8 @@ function Resources(onLoaded) {
 	this._onResourceLoad = function(loader) {		
 		++loader.loadedCount;
 		
-		if (loader.loadedCount == loader.count)
+		if (loader.loadedCount == loader.count && typeof loader.onLoaded == 'function') {
 			loader.onLoaded();
+		}
 	};
 }
