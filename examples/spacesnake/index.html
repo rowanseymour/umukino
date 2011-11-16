@@ -7,6 +7,7 @@
 		<script type="text/javascript" src="../../js/Vector.js"></script>
 		<script type="text/javascript" src="../../js/Resources.js"></script>
 		<script type="text/javascript" src="../../js/Game.js"></script>
+		<script type="text/javascript" src="Snake.js"></script>
 		<script type="text/javascript">
  
 // Globals   	
@@ -15,99 +16,12 @@ var CANVAS_SIZE_Y = 500;
 var CELL_SIZE = 10;
 var CELLS_X = CANVAS_SIZE_X / CELL_SIZE;
 var CELLS_Y = CANVAS_SIZE_Y / CELL_SIZE;
-var TICK_MS = 50;
+var TICK_MS = 100;
 var INIT_TAIL_SIZE = 5;
 var MOVE_UP = new Vector(0, -1);
 var MOVE_DOWN = new Vector(0, 1);
 var MOVE_LEFT = new Vector(-1, 0);
 var MOVE_RIGHT = new Vector(1, 0);
-
-/**
- * Class for the snake
- */
-function Snake(head, length) {
-	this.head = head;
-	this.tail = new Array();
-	this.movement = MOVE_RIGHT;
-	this.dead = false;
-	
-	// Build the initial tail
-	for (var t = 1; t <= length; ++t){
-		this.tail.push(new Vector(head.x - t, head.y));
-	}
-	
-	/**
-	 * Updates the snake every frame
-	 */
-	this.tick = function(keys) {
-		// Change snake movement based on keys
-		if (37 in keys && keys[37] && this.movement != MOVE_RIGHT) {
-			this.movement = MOVE_LEFT;
-		} else if (38 in keys && keys[38] && this.movement != MOVE_DOWN) {
-			this.movement = MOVE_UP;
-		} else if (39 in keys && keys[39] && this.movement != MOVE_LEFT) {
-			this.movement = MOVE_RIGHT;
-		} else if (40 in keys && keys[40] && this.movement != MOVE_UP) {
-			this.movement = MOVE_DOWN;
-		}
-		
-		// Update tail
-		this.tail.pop();
-		this.tail.unshift(this.head.clone());
-		
-		// Move head to new position
-		this.head = this.head.add(this.movement);
-		
-		// Wrap back into board
-		if (this.head.x >= CELLS_X)
-			this.head.x = 0;
-		if (this.head.x < 0)
-			this.head.x = CELLS_X - 1;
-		if (this.head.y >= CELLS_Y)
-			this.head.y = 0;
-		if (this.head.y < 0)
-			this.head.y = CELLS_Y - 1;
-			
-		// Check to see if we've eaten ourself
-		for (var t = 0; t < this.tail.length; ++t) {
-			if (this.head.equals(this.tail[t]))
-				this.dead = true;
-		}
-	}
-	
-	/**
-	 * Draws the snake
-	 */
-	this.draw = function(gfx) {
-		// Draw our tail first
-		for (var t = 0; t < this.tail.length; ++t)
-			board.drawCell(gfx, this.tail[t].x, this.tail[t].y, "#d4ad68");
-		
-		// Then the head
-		board.drawCell(gfx, this.head.x, this.head.y, this.dead ? "#F00" : "#FFF");
-	}
-	
-	/**
-	 * Grows the snake
-	 */
-	this.grow = function() {
-		// Duplicate the last tail cell
-		this.tail.push(this.tail[this.tail.length - 1].clone());
-	}
-	
-	/**
-	 * Test to see if given cell is part of the snake
-	 */
-	this.hitTest = function(cell) {
-		if (this.head.equals(cell))
-			return true;
-		for (var t = 0; t < this.tail.length; ++t) {
-			if (this.tail[t].equals(cell))
-				return true;
-		}
-		return false;
-	}
-}
 
 /**
  * Item class
@@ -117,7 +31,7 @@ function Item(position) {
 	
 	this.draw = function(gfx) {
 		board.drawCell(gfx, this.position.x, this.position.y, "#0F0");
-	}
+	};
 }
 
 /**
@@ -171,7 +85,7 @@ var spacesnake = {
 	 * Updates the game every frame
 	 */
 	onUpdate: function() {	
-		this.snake.tick(this.host.keys);
+		this.snake.update(this.host.keys);
 		
 		// Has snake eaten an item?
 		for (var i = 0; i < this.items.length; ++i) {
