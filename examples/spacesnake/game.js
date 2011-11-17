@@ -37,9 +37,9 @@ var game = {
 	items: [],
 		
 	/**
-	 * Initializes the game so it's ready to start
+	 * Loads the game so it's ready to start
 	 */
-	onInit: function() {
+	onLoad: function() {
 		this.snake = new Snake(new Vector(CELLS_X / 2, CELLS_Y / 2), INIT_TAIL_SIZE);
 		this.items = new Array(new Item(this.randomFreeCell()));
 		

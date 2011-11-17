@@ -26,11 +26,12 @@ var STATE_FINISHED = 4;
 var game_count = 0;
 
 /**
- * Hosts the given game
+ * Host to run the given game
  */
-function Host(game, updateMs) {
+function Host(game, resources, updateMs) {
 	this.game = game;
 	this.game.host = this;
+	this.resources = resources;
 	
 	this.state = STATE_LOADING;
 	this.id = ++game_count;
@@ -45,16 +46,29 @@ function Host(game, updateMs) {
 	
 	// Create a global var that references this object,
 	// which we can use in the setTimeout callback
-	eval("game_" + this.id + " = this;");
+	eval("$host_" + this.id + " = this;");
+	
+	// Create a local var that references this object,
+	// which we can use inside callbacks
+	var host = this;
+	
+	// Have jQuery call our load method when the DOM is ready
+	$(document).ready(function() { host.load(); });
 	
 	/**
-	 * Initializes the game so it's ready to start
+	 * Loads the game so it's ready to start
 	 */
-	this.init = function() {
-		if (typeof this.game.onInit === 'function')
-			this.game.onInit();
-			
-		var host = this;		
+	this.load = function() {
+		// Load resources
+		if (this.resources) {
+			this.resources.load();
+		}
+		
+		// Load game
+		if (typeof this.game.onLoad === 'function') {
+			this.game.onLoad();
+		}
+					
 		document.onkeydown = function(event) { host.keys[event.keyCode] = true; event.preventDefault(); }
 		document.onkeyup = function(event) { host.keys[event.keyCode] = false; event.preventDefault(); }
 		
@@ -169,6 +183,6 @@ function Host(game, updateMs) {
 	 * Requests the next update call
 	 */
 	this._requestNextUpdate = function() {
-		this.timerId = setTimeout("game_" + this.id + ".update()", this.updateMs);
+		this.timerId = setTimeout("$host_" + this.id + ".update()", this.updateMs);
 	}
 }

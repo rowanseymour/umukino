@@ -26,9 +26,9 @@ var TICK_MS = 25;
  */
 var game = {	
 	/**
-	 * Initializes the game
+	 * Loads the game
 	 */
-	onInit: function() {	
+	onLoad: function() {	
 		this.draw();
 	},
 

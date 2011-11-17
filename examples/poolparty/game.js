@@ -32,9 +32,9 @@ var game = {
 	balls: [],
 	 
 	/**
-	 * Initializes the game
+	 * Loads the game
 	 */
-	onInit: function() {
+	onLoad: function() {
 		// Create the balls
 		this.balls = [];
 		for (var b = 0; b < NUM_BALLS; ++b) {

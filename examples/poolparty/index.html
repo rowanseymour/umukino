@@ -13,10 +13,9 @@
 			// Game resources		
 			var resources = new Resources(function() {});
 			resources.addAudio("ballhit", "ballhit.ogg");
-			resources.load();
 			
 			// Game host
-			var host = new Host(game, TICK_MS); 
+			var host = new Host(game, resources, TICK_MS); 
     	</script>
     	<style type="text/css">
 * {
@@ -36,8 +35,7 @@ input {
 }
     	</style>
     </head>
-	<body onload="host.init();">
-		<audio id="snd_hit" src="ballhit.ogg" preload="auto"></audio>
+	<body>
 		<div align="center">
 			<img src="poolparty.png" />
 			<table border="0" cellpadding="10" cellspacing="0">

@@ -56,10 +56,9 @@ var board = {
 var resources = new Resources(function() {});
 resources.addAudio("munch", "munch.ogg");
 resources.addAudio("explosion", "explosion.ogg");
-resources.load();
 
 // Game host
-var host = new Host(game, TICK_MS); 
+var host = new Host(game, resources, TICK_MS); 
 
     	</script>
     	<style type="text/css">
@@ -85,7 +84,7 @@ input {
 }
     	</style>
     </head>
-	<body onload="host.init();">
+	<body>
 		<div align="center">
 			<table border="0" cellpadding="10" cellspacing="0">
 				<tr>
