@@ -5,58 +5,12 @@
 		<title>Helloworld</title>
 		<script type="text/javascript" src="../../lib/jquery-1.7.min.js"></script>
 		<script type="text/javascript" src="../../js/Game.js"></script>
-		<script type="text/javascript">
-    	
-var CANVAS_SIZE_X = 400;
-var CANVAS_SIZE_Y = 200;
-var TICK_MS = 200;
-
-/**
- * Game content
- */
-var helloworld = {
-	frame: 0,
-	
-	/**
-	 * Initializes the game
-	 */
-	onInit: function() {	
-		this.draw();
-	},
-
-	/**
-	 * Updates the game every frame
-	 */ 	
-	onUpdate: function() {
-		++this.frame;
-		this.draw();
-	},
-	
-	/**
-	 * Draws the canvas
-	 */
-	draw: function() {
-		var canvas = document.getElementById("canvas");  
-		var gfx = canvas.getContext("2d");
-		gfx.font = "20pt Courier";
-		
-		// Draw  background
-		gfx.fillStyle = "#000";
-		gfx.fillRect(0, 0, CANVAS_SIZE_X, CANVAS_SIZE_Y);
-		
-		// Draw text on even frames only
-		if (this.frame % 2 == 0) {
-			gfx.fillStyle = "#FFF";
-			gfx.fillText("Hello world!", 5, 30);
-		}
-	}
-}
-
-/**
- * Game host
- */
-var game = new Game(helloworld, TICK_MS); 
-
+		<script type="text/javascript" src="helloworld.js"></script>
+		<script type="text/javascript">  
+			/**
+			 * Game host
+			 */
+			var game = new Game(helloworld, TICK_MS);
     	</script>
     </head>
 	<body onload="game.init();">
