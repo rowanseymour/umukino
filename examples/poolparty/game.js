@@ -30,11 +30,18 @@ var colors = [ "#F00", "#F00", "#F00", "#FF0", "#F0F", "#0FF", "00F" ];
 var game = {
 	spotlight: new Vector(CANVAS_SIZE_X / 2, CANVAS_SIZE_Y / 2),
 	balls: [],
+	
+	/**
+	 * Game has been loaded
+	 */ 
+	onLoad: function() {
+		// TODO draw start screen
+	},
 	 
 	/**
-	 * Loads the game
-	 */
-	onLoad: function() {
+	 * Starts a new game
+	 */ 
+	onStart: function() {
 		// Create the balls
 		this.balls = [];
 		for (var b = 0; b < NUM_BALLS; ++b) {
@@ -45,8 +52,6 @@ var game = {
 			var randColor = colors[Math.floor(Math.random() * colors.length)];
 			this.balls.push(new Ball(new Vector(randPosX, randPosY), new Vector(randVelX, randVelY), randColor));
 		}
-		
-		this.draw();
 	},
 
 	/**

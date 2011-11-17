@@ -20,12 +20,11 @@
 /**
  * Class for loading and managing resources
  */
-function Resources(onLoaded) {
+function Resources() {
 	this.imagePaths = new Array();
 	this.audioPaths = new Array();
 	this.count = 0
 	this.loadedCount = 0;
-	this.onLoaded = onLoaded;
 	
 	/**
 	 * Adds an image resource
@@ -46,8 +45,10 @@ function Resources(onLoaded) {
 	/**
 	 * Loads all resources
 	 */
-	this.load = function() {
+	this.load = function(onLoaded, onProgress) {
 		this.loadedCount = 0;
+		this.onLoaded = onLoaded;
+		this.onProgress = onProgress;
 		this.image = new Object();
 		this.audio = new Object();
 		
@@ -90,6 +91,9 @@ function Resources(onLoaded) {
 	 */
 	this._onResourceLoad = function(loader) {		
 		++loader.loadedCount;
+		
+		// Invoke the progress callback with the percentage of resources loaded
+		loader.onProgress(100.0 * loader.loadedCount / loader.count);
 		
 		if (loader.loadedCount == loader.count && typeof loader.onLoaded == 'function') {
 			loader.onLoaded();

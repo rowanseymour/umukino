@@ -28,21 +28,21 @@ var game_count = 0;
 /**
  * Host to run the given game
  */
-function Host(game, resources, updateMs) {
+function Host(game, resources, canvas, updateMs) {
 	this.game = game;
 	this.game.host = this;
 	this.resources = resources;
+	
+	this.loadingScreen = new LoadingScreen(canvas);
 	
 	this.state = STATE_LOADING;
 	this.id = ++game_count;
 	this.timerId = 0;
 	
-	this.time = new Date().getTime();
 	this.updateMs = updateMs;
+	this.time = new Date().getTime();
 	this.updatePrevTime = 0;
 	this.updateTimeAvg = 0;
-	
-	this.keys = new Array();
 	
 	// Create a global var that references this object,
 	// which we can use in the setTimeout callback
@@ -55,35 +55,48 @@ function Host(game, resources, updateMs) {
 	// Have jQuery call our load method when the DOM is ready
 	$(document).ready(function() { host.load(); });
 	
+	// Setup key event listening
+	this.keys = new Array();
+	document.onkeydown = function(event) { host.keys[event.keyCode] = true; event.preventDefault(); }
+	document.onkeyup = function(event) { host.keys[event.keyCode] = false; event.preventDefault(); }
+	
 	/**
 	 * Loads the game so it's ready to start
 	 */
 	this.load = function() {
 		// Load resources
 		if (this.resources) {
-			this.resources.load();
+			this.resources.load(host._onFinishLoad, function(progress) {
+				host.loadingScreen.drawProgress(progress);
+			});
 		}
-		
-		// Load game
-		if (typeof this.game.onLoad === 'function') {
-			this.game.onLoad();
-		}
-					
-		document.onkeydown = function(event) { host.keys[event.keyCode] = true; event.preventDefault(); }
-		document.onkeyup = function(event) { host.keys[event.keyCode] = false; event.preventDefault(); }
-		
-		this.state = STATE_READY;
+		else
+			this._onFinishLoad();
 	};
+	
+	this._onFinishLoad = function() {
+		// Load game
+		if (typeof host.game.onLoad === 'function') {
+			host.game.onLoad();
+		}
+		
+		$('#start').show();
+		
+		host.state = STATE_READY;
+	}
 	
 	/**
 	 * Starts the game
 	 */
 	this.start = function() {
+		if (typeof this.game.onStart === 'function') {
+			this.game.onStart();
+		}
+		
 		this.resume();
 		
 		$('#start').hide();
-		$('#pause').show();
-		$('#reset').show();
+		$('#restart').show();
 	};
 	
 	/**
@@ -93,12 +106,14 @@ function Host(game, resources, updateMs) {
 		// Get the timestamp for this update
 		this.time = new Date().getTime();
 		
-		if (typeof this.game.onUpdate === 'function')
+		if (typeof this.game.onUpdate === 'function') {
 			this.game.onUpdate();	
+		}
 		
 		// Request next frame if game is still running
-		if (this.state == STATE_RUNNING)
+		if (this.state == STATE_RUNNING) {
 			this._requestNextUpdate();
+		}
 		
 		// Calculate smoothed frame update time
 		var updateTime = (new Date()).getTime();
@@ -158,18 +173,15 @@ function Host(game, resources, updateMs) {
 	/**
 	 * Resets the game
 	 */
-	this.reset = function() {
+	this.restart = function() {
 		clearTimeout(this.timerId);
 		
 		$('#start').show();
 		$('#pause').hide();
 		$('#resume').hide();
-		$('#reset').hide();
+		$('#restart').hide();
 		
-		if (typeof this.game.onReset === 'function')
-			this.game.onReset();
-		
-		this.init();
+		this.start();
 	};
 	
 	/**

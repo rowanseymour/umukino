@@ -35,16 +35,22 @@ var MOVE_RIGHT = new Vector(1, 0);
  */
 var game = {
 	items: [],
+	
+	/**
+	 * Game has been loaded
+	 */ 
+	onLoad: function() {
+		// TODO draw start screen
+	},
 		
 	/**
-	 * Loads the game so it's ready to start
-	 */
-	onLoad: function() {
+	 * Starts a new game
+	 */ 
+	onStart: function() {
 		this.snake = new Snake(new Vector(CELLS_X / 2, CELLS_Y / 2), INIT_TAIL_SIZE);
 		this.items = new Array(new Item(this.randomFreeCell()));
 		
-		// Draw the initialized game
-		this.draw();
+		$('#score').text("0");
 	},
 
 	/**
@@ -79,13 +85,6 @@ var game = {
 		this.draw();
 		
 		$("#fps").html(this.host.getFPS());
-	},
-	
-	/**
-	 * Resets the game
-	 */
-	onReset: function() {
-		$('#score').text("0");
 	},
 	
 	/**

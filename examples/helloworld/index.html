@@ -4,10 +4,11 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Helloworld</title>
 		<script type="text/javascript" src="../../lib/jquery-1.7.min.js"></script>
+		<script type="text/javascript" src="../../js/LoadingScreen.js"></script>
 		<script type="text/javascript" src="../../js/Host.js"></script>
 		<script type="text/javascript" src="game.js"></script>
 		<script type="text/javascript">
-			var host = new Host(game, null, TICK_MS);
+			var host = new Host(game, null, null, TICK_MS);
     	</script>
     </head>
 	<body>
@@ -19,7 +20,7 @@
 				<tr>
 					<td>
 						<div style="background-color: #777; padding: 5px; border-radius: 3px;">
-							<input id="start" type="button" value="Start" 
+							<input id="start" type="button" value="Start" style="display: none;"
 								onclick="host.start();" 
 							/>
 							<input id="pause" type="button" value="Pause" style="display: none;" 
@@ -28,8 +29,8 @@
 							<input id="resume" type="button" value="Resume" style="display: none;"
 								onclick="host.resume();"
 							/>
-							<input id="reset" type="button" value="Reset" style="display: none;"
-								onclick="host.reset();"
+							<input id="restart" type="button" value="Restart" style="display: none;"
+								onclick="host.restart();"
 							/>
 						</div>
 					</td>

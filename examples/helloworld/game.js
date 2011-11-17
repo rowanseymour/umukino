@@ -24,14 +24,20 @@ var TICK_MS = 25;
 /**
  * Game content
  */
-var game = {	
+var game = {
 	/**
-	 * Loads the game
-	 */
-	onLoad: function() {	
+	 * Game has been loaded
+	 */ 
+	onLoad: function() {
 		this.draw();
 	},
-
+	
+	/**
+	 * Starts a new game
+	 */ 
+	onStart: function() {
+	},
+	
 	/**
 	 * Updates the game every frame
 	 */ 	
