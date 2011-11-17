@@ -16,10 +16,6 @@
  *
  * Copyright Rowan Seymour 2011
  */
- 
-var CANVAS_SIZE_X = 400;
-var CANVAS_SIZE_Y = 200;
-var TICK_MS = 25;
 
 /**
  * Game content
@@ -54,7 +50,7 @@ var game = {
 		
 		// Draw  background
 		gfx.fillStyle = "#000";
-		gfx.fillRect(0, 0, CANVAS_SIZE_X, CANVAS_SIZE_Y);
+		gfx.fillRect(0, 0, this.host.canvas.width, this.host.canvas.height);
 		
 		// Draw text
 		var green = Math.floor(127 * (Math.sin(this.host.time / 50) + 1));
