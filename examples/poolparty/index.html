@@ -5,16 +5,18 @@
 		<title>Poolparty</title>
 		<script type="text/javascript" src="../../lib/jquery-1.7.min.js"></script>
 		<script type="text/javascript" src="../../js/Vector.js"></script>
-		<script type="text/javascript" src="../../js/Game.js"></script>
+		<script type="text/javascript" src="../../js/Resources.js"></script>
+		<script type="text/javascript" src="../../js/Host.js"></script>
 		<script type="text/javascript" src="Ball.js"></script>
-		<script type="text/javascript" src="poolparty.js"></script>
-		<script type="text/javascript">
-
-/**
- * Game host
- */
-var game = new Game(poolparty, TICK_MS); 
-
+		<script type="text/javascript" src="game.js"></script>
+		<script type="text/javascript">	
+			// Game resources		
+			var resources = new Resources(function() {});
+			resources.addAudio("ballhit", "ballhit.ogg");
+			resources.load();
+			
+			// Game host
+			var host = new Host(game, TICK_MS); 
     	</script>
     	<style type="text/css">
 * {
@@ -34,7 +36,7 @@ input {
 }
     	</style>
     </head>
-	<body onload="game.init();">
+	<body onload="host.init();">
 		<audio id="snd_hit" src="ballhit.ogg" preload="auto"></audio>
 		<div align="center">
 			<img src="poolparty.png" />
@@ -46,16 +48,16 @@ input {
 					<td>
 						<div style="background-color: #252; padding: 5px; border-radius: 3px;">
 							<input id="start" type="button" value="Start" 
-								onclick="game.start();" 
+								onclick="host.start();" 
 							/>
 							<input id="pause" type="button" value="Pause" style="display: none;" 
-								onclick="game.pause();"
+								onclick="host.pause();"
 							/>
 							<input id="resume" type="button" value="Resume" style="display: none;"
-								onclick="game.resume();"
+								onclick="host.resume();"
 							/>
 							<input id="reset" type="button" value="Reset" style="display: none;"
-								onclick="game.reset();"
+								onclick="host.reset();"
 							/>
 							<div style="float: right">
 								FPS:

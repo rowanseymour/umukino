@@ -27,7 +27,7 @@ var colors = [ "#F00", "#F00", "#F00", "#FF0", "#F0F", "#0FF", "00F" ];
 /**
  * Game content
  */
-var poolparty = {
+var game = {
 	spotlight: new Vector(CANVAS_SIZE_X / 2, CANVAS_SIZE_Y / 2),
 	balls: [],
 	 
@@ -106,7 +106,7 @@ var poolparty = {
 						ball2.velocity.x = vc2n.x * cosTh - vc2n.y * sinTh;
 						ball2.velocity.y = vc2n.x * sinTh + vc2n.y * cosTh;
 						
-						$("#snd_hit").get(0).play();
+						resources.audio.ballhit.play();
 					}
 				}
 			}

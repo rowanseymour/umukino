@@ -33,7 +33,7 @@ var MOVE_RIGHT = new Vector(1, 0);
 /**
  * Game content
  */
-var spacesnake = {
+var game = {
 	items: [],
 		
 	/**

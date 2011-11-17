@@ -6,9 +6,9 @@
 		<script type="text/javascript" src="../../lib/jquery-1.7.min.js"></script>
 		<script type="text/javascript" src="../../js/Vector.js"></script>
 		<script type="text/javascript" src="../../js/Resources.js"></script>
-		<script type="text/javascript" src="../../js/Game.js"></script>
+		<script type="text/javascript" src="../../js/Host.js"></script>
 		<script type="text/javascript" src="Snake.js"></script>
-		<script type="text/javascript" src="spacesnake.js"></script>
+		<script type="text/javascript" src="game.js"></script>
 		<script type="text/javascript">
 
 /**
@@ -52,15 +52,14 @@ var board = {
 	}
 }
 
+// Game resources
 var resources = new Resources(function() {});
 resources.addAudio("munch", "munch.ogg");
 resources.addAudio("explosion", "explosion.ogg");
 resources.load();
 
-/**
- * Game host
- */
-var game = new Game(spacesnake, TICK_MS); 
+// Game host
+var host = new Host(game, TICK_MS); 
 
     	</script>
     	<style type="text/css">
@@ -86,7 +85,7 @@ input {
 }
     	</style>
     </head>
-	<body onload="game.init();">
+	<body onload="host.init();">
 		<div align="center">
 			<table border="0" cellpadding="10" cellspacing="0">
 				<tr>
@@ -95,16 +94,16 @@ input {
 						<br />
 						<div style="background-color: #444; padding: 5px; border-radius: 3px;">
 							<input id="start" type="button" value="Start" 
-								onclick="game.start();" 
+								onclick="host.start();" 
 							/>
 							<input id="pause" type="button" value="Pause" style="display: none;" 
-								onclick="game.pause();"
+								onclick="host.pause();"
 							/>
 							<input id="resume" type="button" value="Resume" style="display: none;"
-								onclick="game.resume();"
+								onclick="host.resume();"
 							/>
 							<input id="reset" type="button" value="Reset" style="display: none;"
-								onclick="game.reset();"
+								onclick="host.reset();"
 							/>
 							<div style="float: right">
 								FPS:

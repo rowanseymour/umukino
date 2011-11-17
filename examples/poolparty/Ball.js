@@ -36,8 +36,8 @@ function Ball(position, velocity, color) {
 		gfx.fill();
 		
 		// Draw highlight
-		var offsetX = 5 * (this.position.x - poolparty.spotlight.x) / CANVAS_SIZE_X;
-		var offsetY = 5 * (this.position.y - poolparty.spotlight.y) / CANVAS_SIZE_Y;
+		var offsetX = 5 * (this.position.x - game.spotlight.x) / CANVAS_SIZE_X;
+		var offsetY = 5 * (this.position.y - game.spotlight.y) / CANVAS_SIZE_Y;
 		gfx.beginPath();
 		gfx.arc(this.position.x - offsetX, this.position.y - offsetY, BALL_RADIUS / 3, 0, 2 * Math.PI, false);
 		gfx.fillStyle = "rgba(255, 255, 255, 0.75)";
@@ -48,8 +48,8 @@ function Ball(position, velocity, color) {
 	 * Draws the shadow
 	 */
 	this.drawShadow = function(gfx) {
-		var offsetX = 15 * (this.position.x - poolparty.spotlight.x) / CANVAS_SIZE_X;
-		var offsetY = 15 * (this.position.y - poolparty.spotlight.y) / CANVAS_SIZE_Y;
+		var offsetX = 15 * (this.position.x - game.spotlight.x) / CANVAS_SIZE_X;
+		var offsetY = 15 * (this.position.y - game.spotlight.y) / CANVAS_SIZE_Y;
 		gfx.beginPath();
 		gfx.arc(this.position.x + offsetX, this.position.y + offsetY, BALL_RADIUS, 0, 2 * Math.PI, false);
 		gfx.fillStyle = "rgba(0, 0, 0, 0.25)";

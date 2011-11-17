@@ -18,7 +18,7 @@
  */
  
 // Globals 
-var STATE_NOTREADY = 0;
+var STATE_LOADING = 0;
 var STATE_READY = 1;
 var STATE_RUNNING = 2;
 var STATE_PAUSED = 3;
@@ -26,18 +26,21 @@ var STATE_FINISHED = 4;
 var game_count = 0;
 
 /**
- * Creates a game from the given content
+ * Hosts the given game
  */
-function Game(content, updateMs) {
-	this.content = content;
-	this.content.host = this;
-	this.time = new Date().getTime();
-	this.updateMs = updateMs;
-	this.state = STATE_NOTREADY;
+function Host(game, updateMs) {
+	this.game = game;
+	this.game.host = this;
+	
+	this.state = STATE_LOADING;
 	this.id = ++game_count;
 	this.timerId = 0;
+	
+	this.time = new Date().getTime();
+	this.updateMs = updateMs;
 	this.updatePrevTime = 0;
 	this.updateTimeAvg = 0;
+	
 	this.keys = new Array();
 	
 	// Create a global var that references this object,
@@ -48,12 +51,12 @@ function Game(content, updateMs) {
 	 * Initializes the game so it's ready to start
 	 */
 	this.init = function() {
-		if (typeof this.content.onInit === 'function')
-			this.content.onInit();
+		if (typeof this.game.onInit === 'function')
+			this.game.onInit();
 			
-		var game = this;		
-		document.onkeydown = function(event) { game.keys[event.keyCode] = true; event.preventDefault(); }
-		document.onkeyup = function(event) { game.keys[event.keyCode] = false; event.preventDefault(); }
+		var host = this;		
+		document.onkeydown = function(event) { host.keys[event.keyCode] = true; event.preventDefault(); }
+		document.onkeyup = function(event) { host.keys[event.keyCode] = false; event.preventDefault(); }
 		
 		this.state = STATE_READY;
 	};
@@ -76,8 +79,8 @@ function Game(content, updateMs) {
 		// Get the timestamp for this update
 		this.time = new Date().getTime();
 		
-		if (typeof this.content.onUpdate === 'function')
-			this.content.onUpdate();	
+		if (typeof this.game.onUpdate === 'function')
+			this.game.onUpdate();	
 		
 		// Request next frame if game is still running
 		if (this.state == STATE_RUNNING)
@@ -105,16 +108,16 @@ function Game(content, updateMs) {
 		$('#pause').hide();
 		$('#resume').show();
 		
-		if (typeof this.content.onPause === 'function')
-			this.content.onPause();	
+		if (typeof this.game.onPause === 'function')
+			this.game.onPause();	
 	};
 	
 	/**
 	 * Resumes the game
 	 */
 	this.resume = function() {
-		if (typeof this.content.onResume === 'function')
-			this.content.onResume();	
+		if (typeof this.game.onResume === 'function')
+			this.game.onResume();	
 			
 		this.state = STATE_RUNNING;
 		
@@ -134,8 +137,8 @@ function Game(content, updateMs) {
 		
 		$('#pause').hide();
 		
-		if (typeof this.content.onFinish === 'function')
-			this.content.onFinish();
+		if (typeof this.game.onFinish === 'function')
+			this.game.onFinish();
 	}
 	
 	/**
@@ -149,8 +152,8 @@ function Game(content, updateMs) {
 		$('#resume').hide();
 		$('#reset').hide();
 		
-		if (typeof this.content.onReset === 'function')
-			this.content.onReset();
+		if (typeof this.game.onReset === 'function')
+			this.game.onReset();
 		
 		this.init();
 	};

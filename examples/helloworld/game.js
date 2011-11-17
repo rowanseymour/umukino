@@ -24,7 +24,7 @@ var TICK_MS = 25;
 /**
  * Game content
  */
-var helloworld = {	
+var game = {	
 	/**
 	 * Initializes the game
 	 */
