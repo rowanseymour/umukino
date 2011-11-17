@@ -28,12 +28,13 @@ var game_count = 0;
 /**
  * Host to run the given game
  */
-function Host(game, resources, canvas, updateMs) {
+function Host(game, resources, canvasId, updateMs) {
 	this.game = game;
 	this.game.host = this;
 	this.resources = resources;
+	this.canvas = null;
 	
-	this.loadingScreen = new LoadingScreen(canvas);
+	this.loadingScreen = new LoadingScreen();
 	
 	this.state = STATE_LOADING;
 	this.id = ++game_count;
@@ -64,10 +65,12 @@ function Host(game, resources, canvas, updateMs) {
 	 * Loads the game so it's ready to start
 	 */
 	this.load = function() {
+		this.canvas = document.getElementById(canvasId);
+	
 		// Load resources
 		if (this.resources) {
 			this.resources.load(host._onFinishLoad, function(progress) {
-				host.loadingScreen.drawProgress(progress);
+				host.loadingScreen.drawProgress(host.canvas, progress);
 			});
 		}
 		else

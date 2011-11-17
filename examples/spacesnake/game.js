@@ -91,7 +91,7 @@ var game = {
 	 * Draws the canvas
 	 */
 	draw: function() {
-		var gfx = document.getElementById("board").getContext("2d");
+		var gfx = this.host.canvas.getContext("2d");
 	
 		board.draw(gfx);
 		

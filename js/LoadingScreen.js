@@ -20,10 +20,14 @@
 /**
  * Loading screen
  */
-function LoadingScreen(canvas) {
-	this.canvas = canvas;
-	
-	this.drawProgress = function(progress) {
+function LoadingScreen() {
+	this.drawProgress = function(canvas, progress) {
+		var gfx = canvas.getContext("2d");
+		
+		// Clear canvas
+		gfx.fillStyle = "#000";
+		gfx.fillRect(0, 0, canvas.width, canvas.height);
+		
 		console.log("Loading:" + progress + "%");
 	}
 }

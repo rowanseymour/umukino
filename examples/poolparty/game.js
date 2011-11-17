@@ -130,9 +130,8 @@ var game = {
 	/**
 	 * Draws the canvas
 	 */
-	draw: function() {
-		var canvas = document.getElementById("canvas");  
-		var gfx = canvas.getContext("2d");
+	draw: function() { 
+		var gfx = this.host.canvas.getContext("2d");
 		
 		// Draw table cloth
 		gfx.fillStyle = "#070";
