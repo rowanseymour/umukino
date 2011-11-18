@@ -28,7 +28,7 @@ var colors = [ "#F00", "#F00", "#F00", "#FF0", "#F0F", "#0FF", "00F" ];
  * Game content
  */
 var game = {
-	spotlight: new Vector(CANVAS_SIZE_X / 2, CANVAS_SIZE_Y / 2),
+	spotlight: new Vector2(CANVAS_SIZE_X / 2, CANVAS_SIZE_Y / 2),
 	balls: [],
 	 
 	/**
@@ -43,7 +43,7 @@ var game = {
 			var randVelX = (Math.random() - 0.5) * 6;
 			var randVelY = (Math.random() - 0.5) * 6;
 			var randColor = colors[Math.floor(Math.random() * colors.length)];
-			this.balls.push(new Ball(new Vector(randPosX, randPosY), new Vector(randVelX, randVelY), randColor));
+			this.balls.push(new Ball(new Vector2(randPosX, randPosY), new Vector2(randVelX, randVelY), randColor));
 		}
 	},
 
@@ -99,15 +99,15 @@ var game = {
 						var sinTh = between.y / betLength;
 						
 						// Calculate each ball's velocity along that vector
-						var vc1 = new Vector(ball1.velocity.x * cosTh + ball1.velocity.y * sinTh, ball1.velocity.y * cosTh - ball1.velocity.x * sinTh);
-						var vc2 = new Vector(ball2.velocity.x * cosTh + ball2.velocity.y * sinTh, ball2.velocity.y * cosTh - ball2.velocity.x * sinTh);
+						var vc1 = new Vector2(ball1.velocity.x * cosTh + ball1.velocity.y * sinTh, ball1.velocity.y * cosTh - ball1.velocity.x * sinTh);
+						var vc2 = new Vector2(ball2.velocity.x * cosTh + ball2.velocity.y * sinTh, ball2.velocity.y * cosTh - ball2.velocity.x * sinTh);
 						// Check signs for collision (i.e. are the balls moving together or apart)
 						if ((vc1.x < 0 && vc2.x > 0) || (!vc1.x && !vc2.x))
 							continue;
 							
 						// Calculate new velocities away from collision
-						var vc1n = new Vector(vc2.x, vc1.y);
-						var vc2n = new Vector(vc1.x, vc2.y);
+						var vc1n = new Vector2(vc2.x, vc1.y);
+						var vc2n = new Vector2(vc1.x, vc2.y);
 	
 						// Transform velocities back into xy space
 						ball1.velocity.x = vc1n.x * cosTh - vc1n.y * sinTh;
@@ -197,7 +197,7 @@ var game = {
 			
 			// Apply min speed threshold
 			if (ball.velocity.length2 < minSpeed2) {
-				ball.velocity = new Vector(0, 0);
+				ball.velocity = new Vector2(0, 0);
 			} else {
 				allStopped = false;
 			}

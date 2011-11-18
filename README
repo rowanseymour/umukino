@@ -1,8 +1,12 @@
 Umukino Readme
-=========================
+=================================================
 
 I made some little HTML5 demos and then figured I might as well reorganize them into something reusable like a Javascript games library. Early days yet so there isn't much to see.
 
+To create the minified version, run minify.sh to invoke the bundled copy of Google's Closure Compiler. Note that this will not include include jQuery in the final minified file so this should be included in your project separately.
+
+Licence
+========================
 All code licenced under GPLv3
 
 Copyright Rowan Seymour 2011

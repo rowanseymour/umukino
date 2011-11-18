@@ -79,7 +79,7 @@ function Resources() {
 	 * Binds a callback to an event on a DOM element, so that it will
 	 * only be called once and will get this loader as an argument
 	 */
-	this._bindEvent = function(elem, name, callback, arguments) {
+	this._bindEvent = function(elem, name, callback) {
 		return elem.addEventListener(name, function listener() {
 			elem.removeEventListener(name, listener);
 			return callback();
