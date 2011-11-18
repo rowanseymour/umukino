@@ -26,6 +26,9 @@ function Resources() {
 	this.count = 0
 	this.loadedCount = 0;
 	
+	// Create local var for callbacks
+	var resources = this;
+	
 	/**
 	 * Adds an image resource
 	 */
@@ -53,18 +56,19 @@ function Resources() {
 		this.audio = new Object();
 		
 		// Load all image resources
-		for (var a = 0; a < this.imagePaths.length; ++a) {
-			var key = this.imagePaths[a][0];
-			var src = this.imagePaths[a][1];		
-			this.image[key] = new Image(src);		
-			this._bindEvent(this.image[key], "onload", this._onResourceLoad);
-			this.image[key].load();
+		for (var r = 0; r < this.imagePaths.length; ++r) {
+			var key = this.imagePaths[r][0];
+			var src = this.imagePaths[r][1];		
+			this.image[key] = new Image();		
+			//this._bindEvent(this.image[key], "onload", this._onResourceLoad);
+			this.image[key].onload = this._onResourceLoad;
+			this.image[key].src = src;
 		}
 		
 		// Load all audio resources
-		for (var a = 0; a < this.audioPaths.length; ++a) {
-			var key = this.audioPaths[a][0];
-			var src = this.audioPaths[a][1];		
+		for (var r = 0; r < this.audioPaths.length; ++r) {
+			var key = this.audioPaths[r][0];
+			var src = this.audioPaths[r][1];		
 			this.audio[key] = new Audio(src);		
 			this._bindEvent(this.audio[key], "canplaythrough", this._onResourceLoad);
 			this.audio[key].load();
@@ -76,27 +80,26 @@ function Resources() {
 	 * only be called once and will get this loader as an argument
 	 */
 	this._bindEvent = function(elem, name, callback, arguments) {
-		// Thanks to Javascript weirdness, the callback might not get this object
-		// as it's this reference, so we have to explicitly pass it as an argument
-		var loader = this;
-		
 		return elem.addEventListener(name, function listener() {
 			elem.removeEventListener(name, listener);
-			return callback.apply(this, [loader]);
+			return callback();
 		}, true);
 	};
 	
 	/**
 	 * Called when a resource has been loaded
 	 */
-	this._onResourceLoad = function(loader) {		
-		++loader.loadedCount;
+	this._onResourceLoad = function() {
+		++resources.loadedCount;
 		
 		// Invoke the progress callback with the percentage of resources loaded
-		loader.onProgress(100.0 * loader.loadedCount / loader.count);
+		if (typeof resources.onProgress === 'function') {
+			resources.onProgress(100.0 * resources.loadedCount / resources.count);
+		}
 		
-		if (loader.loadedCount == loader.count && typeof loader.onLoaded === 'function') {
-			loader.onLoaded();
+		// Invoke loaded callback if all resources are loaded
+		if (resources.loadedCount == resources.count && typeof resources.onLoaded === 'function') {
+			resources.onLoaded();
 		}
 	};
 }

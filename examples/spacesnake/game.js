@@ -51,7 +51,7 @@ var game = {
 	 */
 	onUpdate: function(time) {	
 		if (this.host.state == STATE_READY) {
-			//this._drawReady();
+			this._drawReady(time);
 		} if (this.host.state == STATE_RUNNING) {
 			this._updateRunning(time);
 		} else if (this.host.state == STATE_PAUSED) {
@@ -106,6 +106,32 @@ var game = {
 		
 		// Draw the snake
 		this.snake.draw(gfx);
+	},
+	
+	/**
+	 * Draws the ready screen
+	 */
+	_drawReady: function(time) {
+		var gfx = this.host.canvas.getContext("2d");
+		gfx.font = "bold 20px arial,sans-serif";
+		
+		// Clear canvas
+		gfx.fillStyle = "#000";
+		gfx.fillRect(0, 0, this.host.canvas.width, this.host.canvas.height);
+	
+		// Draw logo
+		var img = resources.image.logo;
+		var x = this.host.canvas.width / 2 - img.width / 2;
+		var y = this.host.canvas.height / 2 - img.height / 2;
+		gfx.drawImage(img, x, y);
+		
+		// Draw flashing start message
+		if ((Math.floor(time / 500) % 2) == 0) {
+			var message = "PRESS START";
+			var msgWidth = gfx.measureText(message).width;
+			gfx.fillStyle = "#FFF";
+			gfx.fillText(message, this.host.canvas.width / 2 - msgWidth / 2, 3 * this.host.canvas.height / 4);
+		}
 	},
 	
 	/**
