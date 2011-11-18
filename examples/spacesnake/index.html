@@ -31,7 +31,7 @@ var board = {
 	draw: function(gfx) {
 		// Draw board
 		gfx.fillStyle = "#000";
-		gfx.fillRect(0, 0, CANVAS_SIZE_X, CANVAS_SIZE_Y);
+		gfx.fillRect(0, 0, BOARD_SIZE_X, BOARD_SIZE_Y);
 		
 		// Draw grid lines
 		gfx.beginPath();
@@ -39,11 +39,11 @@ var board = {
 		gfx.strokeStyle = "#888";	
 		for (var x = 0; x < CELLS_X; ++x) {
 			gfx.moveTo(x * CELL_SIZE, 0);
-			gfx.lineTo(x * CELL_SIZE, CANVAS_SIZE_Y);
+			gfx.lineTo(x * CELL_SIZE, BOARD_SIZE_Y);
 		}
 		for (var y = 0; y < CELLS_Y; ++y) {
 			gfx.moveTo(0, y * CELL_SIZE);
-			gfx.lineTo(CANVAS_SIZE_X, y * CELL_SIZE);
+			gfx.lineTo(BOARD_SIZE_X, y * CELL_SIZE);
 		}	
 		gfx.stroke();
 	},
@@ -56,8 +56,9 @@ var board = {
 
 // Game resources
 var resources = new Resources();
-resources.addAudio("munch", "munch.ogg");
-resources.addAudio("explosion", "explosion.ogg");
+resources.addAudio("munch", "audio/munch.ogg");
+resources.addAudio("music", "audio/LigHTr.ogg");
+resources.addAudio("explosion", "audio/explosion.ogg");
 resources.addImage("logo", "logo.png");
 
 // Create game host
@@ -91,9 +92,12 @@ input {
 		<div align="center">
 			<table border="0" cellpadding="10" cellspacing="0">
 				<tr>
-					<td valign="top">
-						<img src="spacesnake.gif" />
-						<br />
+					<td>
+						<canvas id="board" width="600" height="500"></canvas>
+					</td>
+				</tr>
+				<tr>
+					<td>
 						<div style="background-color: #444; padding: 5px; border-radius: 3px;">
 							<input id="start" type="button" value="Start" style="display: none;"
 								onclick="host.start();" 
@@ -112,12 +116,7 @@ input {
 								<span id="fps" style="font-weight: bold">0</span>
 							</div>
 						</div>
-						<br />
-						Score
-						<br />
-						<span id="score">0</span>
 					</td>
-					<td><canvas id="board" width="500" height="500"></canvas></td>
 				</tr>
 			</table>
 		</div>

@@ -169,6 +169,9 @@ function Host(game, resources, canvasId, idleMs) {
 		$('#restart').hide();
 		
 		this.state = STATE_READY;
+		
+		if (typeof this.game.onRestart === 'function')
+			this.game.onRestart();
 	};
 	
 	/**

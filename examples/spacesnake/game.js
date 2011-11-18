@@ -18,11 +18,11 @@
  */
  
 // Globals   	
-var CANVAS_SIZE_X = 500;
-var CANVAS_SIZE_Y = 500;
+var BOARD_SIZE_X = 500;
+var BOARD_SIZE_Y = 500;
 var CELL_SIZE = 10;
-var CELLS_X = CANVAS_SIZE_X / CELL_SIZE;
-var CELLS_Y = CANVAS_SIZE_Y / CELL_SIZE;
+var CELLS_X = BOARD_SIZE_X / CELL_SIZE;
+var CELLS_Y = BOARD_SIZE_Y / CELL_SIZE;
 var TICK_MS = 100;
 var INIT_TAIL_SIZE = 5;
 var MOVE_UP = new Vector(0, -1);
@@ -44,6 +44,9 @@ var game = {
 		this.items = new Array(new Item(this.randomFreeCell()));
 		
 		$('#score').text("0");
+		
+		resources.audio.music.loop = true;
+		resources.audio.music.play();
 	},
 
 	/**
@@ -59,6 +62,24 @@ var game = {
 		} else if (this.host.state == STATE_FINISHED) {
 			//this._drawFinished();
 		}
+	},
+	
+	onPause: function() {
+		resources.audio.music.pause();
+	},
+	
+	onResume: function() {
+		resources.audio.music.play();
+	},
+	
+	onFinish: function() {
+		resources.audio.music.pause();
+		resources.audio.music.currentTime = 0;
+	},
+	
+	onRestart: function() {
+		resources.audio.music.pause();
+		resources.audio.music.currentTime = 0;
 	},
 	
 	_updateRunning: function(time) {
@@ -106,6 +127,10 @@ var game = {
 		
 		// Draw the snake
 		this.snake.draw(gfx);
+		
+		// Draw the side bar
+		gfx.fillStyle = "#444";
+		gfx.fillRect(BOARD_SIZE_X, 0, this.host.canvas.width, this.host.canvas.height);
 	},
 	
 	/**
