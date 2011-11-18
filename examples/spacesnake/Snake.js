@@ -31,12 +31,12 @@ function Snake(head, length) {
 	
 	// Build the initial tail
 	for (var t = 1; t <= length; ++t){
-		this.tail.push(new Vector(head.x - t, head.y));
+		this.tail.push(new Vector2(head.x - t, head.y));
 	}
 	
 	// Build the flare
 	for (var t = length + 1; t <= length + TRAIL_LENGTH; ++t){
-		this.flare.push(new Vector(head.x - t, head.y));
+		this.flare.push(new Vector2(head.x - t, head.y));
 	}
 	
 	/**

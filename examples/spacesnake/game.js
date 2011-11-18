@@ -25,10 +25,10 @@ var CELLS_X = BOARD_SIZE_X / CELL_SIZE;
 var CELLS_Y = BOARD_SIZE_Y / CELL_SIZE;
 var TICK_MS = 100;
 var INIT_TAIL_SIZE = 5;
-var MOVE_UP = new Vector(0, -1);
-var MOVE_DOWN = new Vector(0, 1);
-var MOVE_LEFT = new Vector(-1, 0);
-var MOVE_RIGHT = new Vector(1, 0);
+var MOVE_UP = new Vector2(0, -1);
+var MOVE_DOWN = new Vector2(0, 1);
+var MOVE_LEFT = new Vector2(-1, 0);
+var MOVE_RIGHT = new Vector2(1, 0);
  
 /**
  * Game content
@@ -40,7 +40,7 @@ var game = {
 	 * Starts a new game
 	 */ 
 	onStart: function() {
-		this.snake = new Snake(new Vector(CELLS_X / 2, CELLS_Y / 2), INIT_TAIL_SIZE);
+		this.snake = new Snake(new Vector2(CELLS_X / 2, CELLS_Y / 2), INIT_TAIL_SIZE);
 		this.items = new Array(new Item(this.randomFreeCell()));
 		
 		$('#score').text("0");
@@ -164,7 +164,7 @@ var game = {
 	 */
 	randomFreeCell: function() {
 		while (true) {
-			var cell = new Vector(Math.floor(Math.random() * CELLS_X), Math.floor(Math.random() * CELLS_Y));
+			var cell = new Vector2(Math.floor(Math.random() * CELLS_X), Math.floor(Math.random() * CELLS_Y));
 			
 			// Check this cell isn't occupied by the snake
 			if (this.snake.hitTest(cell))
