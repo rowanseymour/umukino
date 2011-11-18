@@ -28,7 +28,7 @@ var game_count = 0;
 /**
  * Host to run the given game
  */
-function Host(game, resources, canvasId, updateMs) {
+function Host(game, resources, canvasId, idleMs) {
 	this.game = game;
 	this.game.host = this;
 	this.resources = resources;
@@ -38,23 +38,16 @@ function Host(game, resources, canvasId, updateMs) {
 	
 	this.state = STATE_LOADING;
 	this.id = ++game_count;
-	this.timerId = 0;
 	
-	this.updateMs = updateMs;
-	this.time = new Date().getTime();
 	this.updatePrevTime = 0;
 	this.updateTimeAvg = 0;
-	
-	// Create a global var that references this object,
-	// which we can use in the setTimeout callback
-	eval("$host_" + this.id + " = this;");
 	
 	// Create a local var that references this object,
 	// which we can use inside callbacks
 	var host = this;
 	
-	// Have jQuery call our load method when the DOM is ready
-	$(document).ready(function() { host.load(); });
+	// Have jQuery call our _init method when the DOM is ready
+	$(document).ready(function() { host._init(idleMs); });
 	
 	// Setup key event listening
 	this.keys = new Array();
@@ -62,15 +55,16 @@ function Host(game, resources, canvasId, updateMs) {
 	document.onkeyup = function(event) { host.keys[event.keyCode] = false; event.preventDefault(); }
 	
 	/**
-	 * Loads the game so it's ready to start
+	 * Initializes the game so it's ready to start
 	 */
-	this.load = function() {
+	this._init = function(idleMs) {
+		this.timer = new Timer(this, this.update, idleMs);
 		this.canvas = document.getElementById(canvasId);
 	
 		// Load resources
 		if (this.resources) {
 			this.resources.load(host._onFinishLoad, function(progress) {
-				host.loadingScreen.drawProgress(host.canvas, progress);
+				host.loadingScreen.draw(host.canvas, progress);
 			});
 		}
 		else
@@ -78,25 +72,28 @@ function Host(game, resources, canvasId, updateMs) {
 	};
 	
 	this._onFinishLoad = function() {
-		// Load game
-		if (typeof host.game.onLoad === 'function') {
-			host.game.onLoad();
+		// Invoke game callback to load anything extra
+		if (typeof host.game.onLoaded === 'function') {
+			host.game.onLoaded();
 		}
 		
 		$('#start').show();
 		
 		host.state = STATE_READY;
-	}
+		
+		// Start timer to get updates
+		host.timer.start();
+	};
 	
 	/**
 	 * Starts the game
 	 */
 	this.start = function() {
-		if (typeof this.game.onStart === 'function') {
-			this.game.onStart();
+		if (typeof host.game.onStart === 'function') {
+			host.game.onStart();
 		}
 		
-		this.resume();
+		host.resume();
 		
 		$('#start').hide();
 		$('#restart').show();
@@ -105,17 +102,10 @@ function Host(game, resources, canvasId, updateMs) {
 	/**
 	 * Updates the game every frame
 	 */
-	this.update = function() {
-		// Get the timestamp for this update
-		this.time = new Date().getTime();
-		
-		if (typeof this.game.onUpdate === 'function') {
-			this.game.onUpdate();	
-		}
-		
-		// Request next frame if game is still running
-		if (this.state == STATE_RUNNING) {
-			this._requestNextUpdate();
+	this.update = function(time) {
+		// Invoke game's update
+		if (typeof host.game.onUpdate === 'function') {
+			host.game.onUpdate(time);
 		}
 		
 		// Calculate smoothed frame update time
@@ -155,16 +145,12 @@ function Host(game, resources, canvasId, updateMs) {
 		
 		$('#pause').show();
 		$('#resume').hide();
-		
-		this._requestNextUpdate();
 	};
 	
 	/**
 	 * Finishes the game
 	 */
 	this.finish = function() {
-		clearTimeout(this.timerId);
-		
 		this.state = STATE_FINISHED;
 		
 		$('#pause').hide();
@@ -174,17 +160,15 @@ function Host(game, resources, canvasId, updateMs) {
 	}
 	
 	/**
-	 * Resets the game
+	 * Restarts the game
 	 */
-	this.restart = function() {
-		clearTimeout(this.timerId);
-		
+	this.restart = function() {		
 		$('#start').show();
 		$('#pause').hide();
 		$('#resume').hide();
 		$('#restart').hide();
 		
-		this.start();
+		this.state = STATE_READY;
 	};
 	
 	/**
@@ -193,11 +177,4 @@ function Host(game, resources, canvasId, updateMs) {
 	this.getFPS = function() {
 		return this.updateTimeAvg == 0 ? 0 : Math.floor(1000 / this.updateTimeAvg);
 	};
-	
-	/**
-	 * Requests the next update call
-	 */
-	this._requestNextUpdate = function() {
-		this.timerId = setTimeout("$host_" + this.id + ".update()", this.updateMs);
-	}
 }

@@ -20,14 +20,7 @@
 /**
  * Game content
  */
-var game = {
-	/**
-	 * Game has been loaded
-	 */ 
-	onLoad: function() {
-		this.draw();
-	},
-	
+var game = {	
 	/**
 	 * Starts a new game
 	 */ 
@@ -37,14 +30,16 @@ var game = {
 	/**
 	 * Updates the game every frame
 	 */ 	
-	onUpdate: function() {
-		this.draw();
+	onUpdate: function(time) {
+		this._draw(time);
 	},
 	
 	/**
 	 * Draws the canvas
 	 */
-	draw: function() { 
+	_draw: function(time) { 
+		var states = ["Loading", "Ready", "Hello world!", "Paused", "Finished"];
+	
 		var gfx = this.host.canvas.getContext("2d");
 		gfx.font = "20pt Courier";
 		
@@ -53,8 +48,8 @@ var game = {
 		gfx.fillRect(0, 0, this.host.canvas.width, this.host.canvas.height);
 		
 		// Draw text
-		var green = Math.floor(127 * (Math.sin(this.host.time / 50) + 1));
-		gfx.fillStyle = "rgb(0, " + green + ", 0)";;
-		gfx.fillText("Hello world!", 5, 30);
+		var green = Math.floor(127 * (Math.sin(time / 50) + 1));
+		gfx.fillStyle = "rgb(0, " + green + ", 0)";
+		gfx.fillText(states[this.host.state], 5, 30);
 	}
 }

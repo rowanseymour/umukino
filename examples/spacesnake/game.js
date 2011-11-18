@@ -35,13 +35,6 @@ var MOVE_RIGHT = new Vector(1, 0);
  */
 var game = {
 	items: [],
-	
-	/**
-	 * Game has been loaded
-	 */ 
-	onLoad: function() {
-		// TODO draw start screen
-	},
 		
 	/**
 	 * Starts a new game
@@ -56,7 +49,19 @@ var game = {
 	/**
 	 * Updates the game every frame
 	 */
-	onUpdate: function() {	
+	onUpdate: function(time) {	
+		if (this.host.state == STATE_READY) {
+			//this._drawReady();
+		} if (this.host.state == STATE_RUNNING) {
+			this._updateRunning(time);
+		} else if (this.host.state == STATE_PAUSED) {
+			//this._drawPaused();
+		} else if (this.host.state == STATE_FINISHED) {
+			//this._drawFinished();
+		}
+	},
+	
+	_updateRunning: function(time) {
 		this.snake.update(this.host.keys);
 		
 		// Has snake eaten an item?
@@ -82,7 +87,7 @@ var game = {
 			this.host.finish();
 		}
 			
-		this.draw();
+		this._draw();
 		
 		$("#fps").html(this.host.getFPS());
 	},
@@ -90,7 +95,7 @@ var game = {
 	/**
 	 * Draws the canvas
 	 */
-	draw: function() {
+	_draw: function() {
 		var gfx = this.host.canvas.getContext("2d");
 	
 		board.draw(gfx);

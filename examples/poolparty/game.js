@@ -30,13 +30,6 @@ var colors = [ "#F00", "#F00", "#F00", "#FF0", "#F0F", "#0FF", "00F" ];
 var game = {
 	spotlight: new Vector(CANVAS_SIZE_X / 2, CANVAS_SIZE_Y / 2),
 	balls: [],
-	
-	/**
-	 * Game has been loaded
-	 */ 
-	onLoad: function() {
-		// TODO draw start screen
-	},
 	 
 	/**
 	 * Starts a new game
@@ -57,10 +50,22 @@ var game = {
 	/**
 	 * Updates the game every frame
 	 */ 	
-	onUpdate: function() {
+	onUpdate: function(time) {
+		if (this.host.state == STATE_READY) {
+			this._drawReady();
+		} if (this.host.state == STATE_RUNNING) {
+			this._updateRunning(time);
+		} else if (this.host.state == STATE_PAUSED) {
+			this._drawPaused();
+		} else if (this.host.state == STATE_FINISHED) {
+			this._drawFinished();
+		}
+	},
+	
+	_updateRunning: function(time) {
 		// Update spotlight
-		this.spotlight.x = Math.floor(CANVAS_SIZE_X / 2 + 30 * Math.sin(this.host.time / 200));
-		this.spotlight.y = Math.floor(CANVAS_SIZE_Y / 2 + 30 * Math.cos(123 + this.host.time / 300));
+		this.spotlight.x = Math.floor(CANVAS_SIZE_X / 2 + 30 * Math.sin(time / 200));
+		this.spotlight.y = Math.floor(CANVAS_SIZE_Y / 2 + 30 * Math.cos(123 + time / 300));
 	
 		// Update balls
 		for (var b1 = 0; b1 < NUM_BALLS; ++b1) {
@@ -122,7 +127,7 @@ var game = {
 		
 		this._applyFriction(1.5);
 	
-		this.draw();
+		this._draw();
 		
 		$("#fps").html(this.host.getFPS());
 	},
@@ -130,7 +135,7 @@ var game = {
 	/**
 	 * Draws the canvas
 	 */
-	draw: function() { 
+	_draw: function() { 
 		var gfx = this.host.canvas.getContext("2d");
 		
 		// Draw table cloth
@@ -164,6 +169,18 @@ var game = {
 		for (var b = 0; b < NUM_BALLS; ++b) {
 			this.balls[b].draw(gfx);
 		}
+	},
+	
+	_drawReady: function() {
+		var gfx = this.host.canvas.getContext("2d");
+	},
+	
+	_drawPaused: function() {
+		var gfx = this.host.canvas.getContext("2d");
+	},
+	
+	_drawFinished: function() {
+		var gfx = this.host.canvas.getContext("2d");
 	},
 	
 	/** 

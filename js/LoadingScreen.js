@@ -21,7 +21,7 @@
  * Loading screen
  */
 function LoadingScreen() {
-	this.drawProgress = function(canvas, progress) {
+	this.draw = function(canvas, progress) {
 		var gfx = canvas.getContext("2d");
 		gfx.font = "20pt Courier";
 		

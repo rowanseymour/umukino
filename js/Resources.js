@@ -95,7 +95,7 @@ function Resources() {
 		// Invoke the progress callback with the percentage of resources loaded
 		loader.onProgress(100.0 * loader.loadedCount / loader.count);
 		
-		if (loader.loadedCount == loader.count && typeof loader.onLoaded == 'function') {
+		if (loader.loadedCount == loader.count && typeof loader.onLoaded === 'function') {
 			loader.onLoaded();
 		}
 	};
