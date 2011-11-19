@@ -1,9 +1,12 @@
+=================================================
 Umukino Readme
 =================================================
 
 I made some little HTML5 demos and then figured I might as well reorganize them into something reusable like a Javascript games library. Early days yet so there isn't much to see.
 
-To create the minified version, run minify.sh to invoke the bundled copy of Google's Closure Compiler. Note that this will not include include jQuery in the final minified file so this should be included in your project separately.
+To run the unit tests, run runtests.sh to invoke Google JS Test which must be installed on your system (see http://code.google.com/p/google-js-test).
+
+To create the minified version, run minify.sh to invoke the bundled copy of the Google Closure Compiler (see http://code.google.com/closure/compiler). Note that this will not include include jQuery in the final minified file so this should be included in your project separately.
 
 Licence
 ========================

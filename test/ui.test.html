@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Umukino UI Test</title>
+		<script type="text/javascript" src="../lib/jquery-1.7.min.js"></script>
+		<script type="text/javascript" src="../umukino.min.js"></script>
+		<script type="text/javascript" src="../js/Component.js"></script>
+		<script type="text/javascript">
+$(document).ready(function() {
+	var canvas = $("#canvas").get(0);
+	var screen = new umu.ui.Screen(canvas);
+	var panel1 = new umu.ui.Panel(screen, 20, 10, 200, 100, "#F00");
+	var panel2 = new umu.ui.Panel(screen, 20, 110, 300, 50, "#0F0");
+	var label1 = new umu.ui.Label(panel1, 5, 5, 64, 32, "#FF0", "Test");
+	
+	screen.draw();
+});		
+    	</script>
+    </head>
+	<body>
+		<canvas id="canvas" width="400" height="300" style="border: 1px solid #777"></canvas>
+	</body>
+</html>
