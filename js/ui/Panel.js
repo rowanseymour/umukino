@@ -16,15 +16,30 @@
  *
  * Copyright Rowan Seymour 2011
  */
-
-/**
- * Used as a namespace hierarchy
- */
-var umu = { ui: {} };
  
-/**
- * Syntactic sugar for Javascript pseudo-inheritance
- */
-function __extends(clazz, obj, params) {
-	clazz.apply(obj, params);
-}
+umu.ui.Panel = function(parent, x, y, width, height, fillStyle) {
+	__extends(umu.ui.Component, this, [parent, x, y, width, height]);
+	
+	this.fillStyle = fillStyle;
+	
+	this.draw = function(gfx) {
+		gfx.fillStyle = fillStyle;
+		gfx.fillRect(0, 0, this.width, this.height);
+	};
+};
+
+umu.ui.Label = function(parent, x, y, width, height, fillStyle, text) {
+	__extends(umu.ui.Panel, this, [parent, x, y, width, height, fillStyle]);
+	
+	this.text = text;
+	
+	this.draw = function(gfx) {
+		gfx.fillStyle = fillStyle;
+		gfx.fillRect(0, 0, this.width, this.height);
+		
+		gfx.textAlign = "center";
+		gfx.textBaseline = "middle";
+		gfx.fillStyle = "#000";
+		gfx.fillText(this.text, this.width / 2, this.height / 2);
+	};
+};

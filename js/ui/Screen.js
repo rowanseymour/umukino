@@ -16,15 +16,13 @@
  *
  * Copyright Rowan Seymour 2011
  */
-
-/**
- * Used as a namespace hierarchy
- */
-var umu = { ui: {} };
  
-/**
- * Syntactic sugar for Javascript pseudo-inheritance
- */
-function __extends(clazz, obj, params) {
-	clazz.apply(obj, params);
-}
+umu.ui.Screen = function(canvas) {
+	__extends(umu.ui.Component, this, [null, 0, 0, canvas.width, canvas.height]);
+	
+	this.canvas = canvas;
+	
+	this.draw = function() {
+		this.drawChildren(this.canvas.getContext("2d"));
+	};
+};
