@@ -20,17 +20,21 @@
 /**
  * Loading screen
  */
-function LoadingScreen() {
-	this.draw = function(canvas, progress) {
-		var gfx = canvas.getContext("2d");
+umu.ui.LoadingScreen = function(canvas) {
+	__extends(umu.ui.Screen, this, [canvas]);
+	
+	this.progress = 0;
+
+	this.draw = function() {
+		var gfx = this.canvas.getContext("2d");
 		gfx.font = "20pt Courier";
 		
 		// Clear canvas
 		gfx.fillStyle = "#000";
-		gfx.fillRect(0, 0, canvas.width, canvas.height);
+		gfx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 		
 		// Write progress
 		gfx.fillStyle = "#FFF";;
-		gfx.fillText("Loading:" + progress + "%", 5, canvas.height - 5);
-	}
-}
+		gfx.fillText("Loading:" + this.progress + "%", 5, this.canvas.height - 5);
+	};
+};

@@ -34,8 +34,6 @@ function Host(game, resources, canvasId, idleMs) {
 	this.resources = resources;
 	this.canvas = null;
 	
-	this.loadingScreen = new LoadingScreen();
-	
 	this.state = STATE_LOADING;
 	this.id = ++game_count;
 	
@@ -60,6 +58,7 @@ function Host(game, resources, canvasId, idleMs) {
 	this._init = function(idleMs) {
 		this.timer = new Timer(this, this.update, idleMs);
 		this.canvas = document.getElementById(canvasId);
+		this.loadingScreen = new umu.ui.LoadingScreen(this.canvas);
 	
 		// Load resources
 		if (this.resources) {
