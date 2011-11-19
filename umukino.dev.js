@@ -494,7 +494,8 @@ umu.Host = function(game, resources, canvasId, idleMs) {
 		// Load resources
 		if (this.resources) {
 			this.resources.load(host._onFinishLoad, function(progress) {
-				host.loadingScreen.draw(host.canvas, progress);
+				host.loadingScreen.progress = progress;
+				host.loadingScreen.draw();
 			});
 		}
 		else
