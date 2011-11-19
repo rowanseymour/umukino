@@ -26,5 +26,13 @@ var umu = { ui: {} };
  * Syntactic sugar for Javascript pseudo-inheritance
  */
 function __extends(clazz, obj, params) {
+	// Call "sub class" constructor on the given object
 	clazz.apply(obj, params);
+}
+
+/**
+ * Used to retain a super class method on the __super object
+ */
+function __retain(fname, obj) {
+	eval("obj.super$" + fname + " = obj." + fname);
 }

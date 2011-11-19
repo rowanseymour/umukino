@@ -23,19 +23,19 @@ umu.ui.Panel = function(parent, x, y, width, height, fillStyle) {
 	this.fillStyle = fillStyle;
 	
 	this.draw = function(gfx) {
-		gfx.fillStyle = fillStyle;
+		gfx.fillStyle = this.fillStyle;
 		gfx.fillRect(0, 0, this.width, this.height);
 	};
 };
 
 umu.ui.Label = function(parent, x, y, width, height, fillStyle, text) {
 	__extends(umu.ui.Panel, this, [parent, x, y, width, height, fillStyle]);
+	__retain("draw", this);
 	
 	this.text = text;
-	
+
 	this.draw = function(gfx) {
-		gfx.fillStyle = fillStyle;
-		gfx.fillRect(0, 0, this.width, this.height);
+		this.super$draw(gfx);
 		
 		gfx.textAlign = "center";
 		gfx.textBaseline = "middle";
