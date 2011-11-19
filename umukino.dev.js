@@ -130,7 +130,7 @@ function Vector2(x, y) {
 /**
  * Class for creating repeated callbacks with some idle time in between
  */
-function Timer(host, callback, idleMs) {
+umu.Timer = function(host, callback, idleMs) {
 	this.host = host;
 	this.callback = callback;
 	this.idleMs = idleMs;
@@ -191,9 +191,9 @@ function Timer(host, callback, idleMs) {
  */
  
 /**
- * Class for loading and managing resources
+ * Loads and manages resources
  */
-function Resources() {
+umu.Resources = function() {
 	this.imagePaths = new Array();
 	this.audioPaths = new Array();
 	this.count = 0
@@ -275,7 +275,7 @@ function Resources() {
 			resources.onLoaded();
 		}
 	};
-}/**
+};/**
  * This file is part of Umukino
  * 
  * Umukino is free software: you can redistribute it and/or modify
@@ -459,7 +459,7 @@ var game_count = 0;
 /**
  * Host to run the given game
  */
-function Host(game, resources, canvasId, idleMs) {
+umu.Host = function(game, resources, canvasId, idleMs) {
 	this.game = game;
 	this.game.host = this;
 	this.resources = resources;
@@ -487,7 +487,7 @@ function Host(game, resources, canvasId, idleMs) {
 	 * Initializes the game so it's ready to start
 	 */
 	this._init = function(idleMs) {
-		this.timer = new Timer(this, this.update, idleMs);
+		this.timer = new umu.Timer(this, this.update, idleMs);
 		this.canvas = document.getElementById(canvasId);
 		this.loadingScreen = new umu.ui.LoadingScreen(this.canvas);
 	
@@ -553,8 +553,6 @@ function Host(game, resources, canvasId, idleMs) {
 	 * Pauses the game
 	 */
 	this.pause = function() {
-		clearTimeout(this.timerId);
-		
 		this.state = STATE_PAUSED;
 		
 		$('#pause').hide();
@@ -610,4 +608,4 @@ function Host(game, resources, canvasId, idleMs) {
 	this.getFPS = function() {
 		return this.updateTimeAvg == 0 ? 0 : Math.floor(1000 / this.updateTimeAvg);
 	};
-}
+};

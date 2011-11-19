@@ -51,14 +51,14 @@ var board = {
 }
 
 // Game resources
-var resources = new Resources();
+var resources = new umu.Resources();
 resources.addAudio("munch", "audio/munch.ogg");
 resources.addAudio("music", "audio/LigHTr.ogg");
 resources.addAudio("explosion", "audio/explosion.ogg");
 resources.addImage("logo", "logo.png");
 
 // Create game host
-var host = new Host(game, resources, "board", TICK_MS); 
+var host = new umu.Host(game, resources, "board", TICK_MS); 
 
     	</script>
     	<style type="text/css">

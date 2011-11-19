@@ -18,9 +18,9 @@
  */
  
 /**
- * Class for loading and managing resources
+ * Loads and manages resources
  */
-function Resources() {
+umu.Resources = function() {
 	this.imagePaths = new Array();
 	this.audioPaths = new Array();
 	this.count = 0
@@ -102,4 +102,4 @@ function Resources() {
 			resources.onLoaded();
 		}
 	};
-}
+};

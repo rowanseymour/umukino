@@ -20,7 +20,7 @@
 /**
  * Class for creating repeated callbacks with some idle time in between
  */
-function Timer(host, callback, idleMs) {
+umu.Timer = function(host, callback, idleMs) {
 	this.host = host;
 	this.callback = callback;
 	this.idleMs = idleMs;
