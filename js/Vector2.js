@@ -23,60 +23,60 @@
 function Vector2(x, y) {
 	this.x = x;
 	this.y = y;
-	
-	/**
-	 * Clones this array
-	 */
-	this.clone = function() {
-		return new Vector2(this.x, this.y);
-	};
-	
-	/**
-	 * Adds the given vector to this vector and returns the result
-	 */
-	this.add = function(v) {
-		return new Vector2(this.x + v.x, this.y + v.y);
-	};
-	
-	/**
-	 * Subtracts the given vector from this vector and returns the result
-	 */
-	this.subtract = function(v) {
-		return new Vector2(this.x - v.x, this.y - v.y);
-	};
-	
-	/**
-	 * Scales this vector and returns the result
-	 */
-	this.scale = function(s) {
-		return new Vector2(this.x * s, this.y * s);
-	};
-	
-	/**
-	 * Gets the dot product of this vector and the given vector
-	 */
-	this.dot = function(v) {
-		return this.x * v.x + this.y * v.y;
-	};
-	
-	/**
-	 * Calculates the length of this vector
-	 */
-	this.length = function() {
-		return Math.sqrt(this.x * this.x + this.y * this.y);
-	};
-	
-	/**
-	 * Calculates the squared length of this vector
-	 */
-	this.length2 = function() {
-		return this.x * this.x + this.y * this.y;
-	};
-	
-	/**
-	 * Equality test
-	 */
-	this.equals = function(v) {
-		return this.x == v.x && this.y == v.y;
-	};
 }
+
+/**
+ * Clones this vector
+ */
+Vector2.prototype.clone = function() {
+	return new Vector2(this.x, this.y);
+};
+
+/**
+ * Adds the given vector to this vector and returns the result
+ */
+Vector2.prototype.add = function(v) {
+	return new Vector2(this.x + v.x, this.y + v.y);
+};
+
+/**
+ * Subtracts the given vector from this vector and returns the result
+ */
+Vector2.prototype.subtract = function(v) {
+	return new Vector2(this.x - v.x, this.y - v.y);
+};
+
+/**
+ * Scales this vector and returns the result
+ */
+Vector2.prototype.scale = function(s) {
+	return new Vector2(this.x * s, this.y * s);
+};
+
+/**
+ * Gets the dot product of this vector and the given vector
+ */
+Vector2.prototype.dot = function(v) {
+	return this.x * v.x + this.y * v.y;
+};
+
+/**
+ * Calculates the length of this vector
+ */
+Vector2.prototype.length = function() {
+	return Math.sqrt(this.x * this.x + this.y * this.y);
+};
+
+/**
+ * Calculates the squared length of this vector
+ */
+Vector2.prototype.length2 = function() {
+	return this.x * this.x + this.y * this.y;
+};
+
+/**
+ * Equality test
+ */
+Vector2.prototype.equals = function(v) {
+	return (this == v) || (this.x == v.x && this.y == v.y);
+};
