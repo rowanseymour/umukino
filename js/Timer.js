@@ -16,8 +16,10 @@
  *
  * Copyright Rowan Seymour 2011
  */
- 
+
+// Globals 
 umu.timerCount = 0;
+umu.timer = [];
  
 /**
  * Class for creating repeated callbacks with some idle time in between
@@ -25,21 +27,24 @@ umu.timerCount = 0;
 umu.Timer = function(callback, idleMs) {
 	this.callback = callback;
 	this.idleMs = idleMs;
-	this.id = ++umu.timerCount;
-	this.timerId = 0;
+	
+	this.id = umu.timerCount++;
+	this.timeoutId = 0;
+	this.interrupted = false;
 	
 	this.tickPrevTime = 0;
 	this.tickTimeAvg = 0;
 
 	// Create a global var that references this object,
 	// which we can use in the setTimeout callback
-	eval("$timer_" + this.id + " = this;");
+	umu.timer[this.id] = this;
 }
 
 /**
  * Starts the timer
  */
 umu.Timer.prototype.start = function() {
+	this.interrupted = false;
 	this._requestNextTick();
 };
 
@@ -47,14 +52,15 @@ umu.Timer.prototype.start = function() {
  * Stops the timer
  */
 umu.Timer.prototype.stop = function() {
-	clearTimeout(this.timerId);
+	clearTimeout(this.timeoutId);
+	this.interrupted = true;
 };
 
 /**
  * Request next timer tick after some idle time
  */
 umu.Timer.prototype._requestNextTick = function() {
-	this.timerId = setTimeout("$timer_" + this.id + "._tick()", this.idleMs);
+	this.timerId = setTimeout("umu.timer[" + this.id + "]._tick()", this.idleMs);
 };
 
 /**
@@ -75,6 +81,7 @@ umu.Timer.prototype._tick = function() {
 	this.tickPrevTime = tickTime;
 	
 	// Request next timer tick
-	this._requestNextTick();
+	if (!this.interrupted)
+		this._requestNextTick();
 };
 	
