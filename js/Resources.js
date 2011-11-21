@@ -30,52 +30,6 @@ umu.Resources = function() {
 	var resources = this;
 	
 	/**
-	 * Adds an image resource
-	 */
-	this.addImage = function(key, src) {
-		this.imagePaths.push([key, src]);
-		++this.count;
-	};
-
-	/**
-	 * Adds an audio resource
-	 */
-	this.addAudio = function(key, src) {
-		this.audioPaths.push([key, src]);
-		++this.count;
-	};
-	
-	/**
-	 * Loads all resources
-	 */
-	this.load = function(onLoaded, onProgress) {
-		this.loadedCount = 0;
-		this.onLoaded = onLoaded;
-		this.onProgress = onProgress;
-		this.image = new Object();
-		this.audio = new Object();
-		
-		// Load all image resources
-		for (var r = 0; r < this.imagePaths.length; ++r) {
-			var key = this.imagePaths[r][0];
-			var src = this.imagePaths[r][1];		
-			this.image[key] = new Image();		
-			//this._bindEvent(this.image[key], "onload", this._onResourceLoad);
-			this.image[key].onload = this._onResourceLoad;
-			this.image[key].src = src;
-		}
-		
-		// Load all audio resources
-		for (var r = 0; r < this.audioPaths.length; ++r) {
-			var key = this.audioPaths[r][0];
-			var src = this.audioPaths[r][1];		
-			this.audio[key] = new Audio(src);		
-			this._bindEvent(this.audio[key], "canplaythrough", this._onResourceLoad);
-			this.audio[key].load();
-		}
-	};
-	
-	/**
 	 * Binds a callback to an event on a DOM element, so that it will
 	 * only be called once and will get this loader as an argument
 	 */
@@ -102,4 +56,50 @@ umu.Resources = function() {
 			resources.onLoaded();
 		}
 	};
+};
+
+/**
+ * Adds an image resource
+ */
+umu.Resources.prototype.addImage = function(key, src) {
+	this.imagePaths.push([key, src]);
+	++this.count;
+};
+
+/**
+ * Adds an audio resource
+ */
+umu.Resources.prototype.addAudio = function(key, src) {
+	this.audioPaths.push([key, src]);
+	++this.count;
+};
+
+/**
+ * Loads all resources
+ */
+umu.Resources.prototype.load = function(onLoaded, onProgress) {
+	this.loadedCount = 0;
+	this.onLoaded = onLoaded;
+	this.onProgress = onProgress;
+	this.image = new Object();
+	this.audio = new Object();
+	
+	// Load all image resources
+	for (var r = 0; r < this.imagePaths.length; ++r) {
+		var key = this.imagePaths[r][0];
+		var src = this.imagePaths[r][1];		
+		this.image[key] = new Image();		
+		//this._bindEvent(this.image[key], "onload", this._onResourceLoad);
+		this.image[key].onload = this._onResourceLoad;
+		this.image[key].src = src;
+	}
+	
+	// Load all audio resources
+	for (var r = 0; r < this.audioPaths.length; ++r) {
+		var key = this.audioPaths[r][0];
+		var src = this.audioPaths[r][1];		
+		this.audio[key] = new Audio(src);		
+		this._bindEvent(this.audio[key], "canplaythrough", this._onResourceLoad);
+		this.audio[key].load();
+	}
 };

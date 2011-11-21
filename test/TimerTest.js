@@ -43,7 +43,7 @@ TimerTest.prototype.checkInit = function() {
 	expectEq(2, umu.timerCount);
 	expectEq(this.timer1, umu.timer[0]);
 	expectEq(this.timer2, umu.timer[1]);
-}
+};
 
 TimerTest.prototype.checkCallback = function() {
 	// Check that callback gets called
@@ -51,4 +51,4 @@ TimerTest.prototype.checkCallback = function() {
 	expectCall(this.onTick)(_).willOnce(function(){ timer.stop(); });
 	
 	this.timer1.start();
-}
+};
