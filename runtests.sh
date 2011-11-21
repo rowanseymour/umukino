@@ -2,7 +2,4 @@
 #
 # Runs unit tests using Google JS Test
 
-gjstest --js_files=\
-js/Vector2.js,\
-js/Host.js,\
-test/Vector2Test.js
+gjstest --js_files=umukino.dev.js,test/Vector2Test.js

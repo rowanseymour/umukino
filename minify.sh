@@ -1,23 +1,13 @@
 #!/bin/bash
 #
-# Minifies the Javascript using Googe's Closure Compiler
+# Minifies the Javascript using the Google Closure Compiler
+#
+# First do simple file concatenation to create 'dev' version...
+# 
 
-java -jar tools/compiler.jar \
-	--js=js/utils.js \
-	--js=js/Vector2.js \
-	--js=js/Timer.js \
-	--js=js/Resources.js \
-	--js=js/ui/Component.js \
-	--js=js/ui/Screen.js \
-	--js=js/ui/Panel.js \
-	--js=js/ui/LoadingScreen.js \
-	--js=js/Host.js \
-	--js_output_file=umukino.min.js \
-	--compilation_level=WHITESPACE_ONLY \
-	--output_wrapper="/* Umukino :: Copyright Rowan Seymour 2011 */ %output%"
-	
 cat js/utils.js \
 	js/Vector2.js \
+	js/Vector3.js \
 	js/Timer.js \
 	js/Resources.js \
 	js/ui/Component.js \
@@ -26,3 +16,14 @@ cat js/utils.js \
 	js/ui/LoadingScreen.js \
 	js/Host.js \
 	> umukino.dev.js
+
+#
+# The minify the hell out of it!!!
+#
+
+java -jar tools/compiler.jar \
+	--js=umukino.dev.js \
+	--js_output_file=umukino.min.js \
+	--output_wrapper="/* Umukino :: Copyright Rowan Seymour 2011 :: https://github.com/rowanseymour/umukino */ %output%"
+	
+
