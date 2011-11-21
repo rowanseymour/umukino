@@ -17,25 +17,19 @@
  * Copyright Rowan Seymour 2011
  */
  
-function TimerTest() {
-	this.onTick = createMockFunction();
-	this.timer1 = new umu.Timer(this.onTick, 1);
-	this.timer2 = new umu.Timer(this.onTick, 1000);
+function Image() { 
+	this.src = ""; 
 }
 
-registerTestSuite(TimerTest);
+function Audio() { 
+	this.src = ""; 
+	this.addEventListener = function(event, func, capture) {};
+	this.load = function() {};
+}
 
-TimerTest.prototype.checkInit = function() {	
-	// Check that global vars are created
-	expectEq(2, umu.timerCount);
-	expectEq(this.timer1, umu.timer[0]);
-	expectEq(this.timer2, umu.timer[1]);
-};
+function setTimeout(script, time) {
+	eval(script);
+}
 
-TimerTest.prototype.checkCallback = function() {
-	// Check that callback gets called
-	var timer = this.timer1;
-	expectCall(this.onTick)(_).willOnce(function(){ timer.stop(); });
-	
-	this.timer1.start();
-};
+function clearTimeout(script, time) {
+}

@@ -17,20 +17,6 @@
  * Copyright Rowan Seymour 2011
  */
  
-/**
- * Mock audio class
- */
-function Image() { this.src = ""; }
-
-/**
- * Mock image class
- */
-function Audio() { 
-	this.src = ""; 
-	this.addEventListener = function(event, func, capture) {};
-	this.load = function() {};
-}
- 
 function ResourcesTest() {
 	this.resources = new umu.Resources();
 	this.onLoaded = createMockFunction();
