@@ -24,51 +24,51 @@ registerTestSuite(Vector3Test);
 Vector3Test.prototype.clone = function() {
 	var vec1 = new Vector3(1, 2, 3);
 	var vec2 = vec1.clone();
-	expectEq(vec2.x, 1);
-	expectEq(vec2.y, 2);
-	expectEq(vec2.z, 3);
+	expectEq(1, vec2.x);
+	expectEq(2, vec2.y);
+	expectEq(3, vec2.z);
 };
 
 Vector3Test.prototype.add = function() {
 	var vec1 = new Vector3(1, 2, 3);
 	var vec2 = new Vector3(3, 4, 5);
 	var vec3 = vec1.add(vec2);
-	expectEq(vec3.x, 4);
-	expectEq(vec3.y, 6);
-	expectEq(vec3.z, 8);
+	expectEq(4, vec3.x);
+	expectEq(6, vec3.y);
+	expectEq(8, vec3.z);
 };
 
 Vector3Test.prototype.subtract = function() {
 	var vec1 = new Vector3(1, 2, 3);
 	var vec2 = new Vector3(3, 6, 1);
 	var vec3 = vec1.subtract(vec2);
-	expectEq(vec3.x, -2);
-	expectEq(vec3.y, -4);
-	expectEq(vec3.z, 2);
+	expectEq(-2, vec3.x);
+	expectEq(-4, vec3.y);
+	expectEq(2, vec3.z);
 };
 
 Vector3Test.prototype.scale = function() {
 	var vec1 = new Vector3(1, 2, 3);
 	var vec2 = vec1.scale(0.5);
-	expectEq(vec2.x, 0.5);
-	expectEq(vec2.y, 1);
-	expectEq(vec2.z, 1.5);
+	expectEq(0.5, vec2.x);
+	expectEq(1, vec2.y);
+	expectEq(1.5, vec2.z);
 };
 
 Vector3Test.prototype.dot = function() {
 	var vec1 = new Vector3(1, 2, 3);
 	var vec2 = new Vector3(3, 4, 5);
-	expectEq(vec1.dot(vec2), 26);
+	expectEq(26, vec1.dot(vec2));
 };
 
 Vector3Test.prototype.length = function() {
 	var vec1 = new Vector3(3, 4, 5);
-	expectEq(vec1.length(), Math.sqrt(50));
+	expectEq(Math.sqrt(50), vec1.length());
 };
 
 Vector3Test.prototype.length2 = function() {
 	var vec1 = new Vector3(3, 4, 5);
-	expectEq(vec1.length2(), 50);
+	expectEq(50, vec1.length2());
 };
 
 Vector3Test.prototype.equals = function() {
