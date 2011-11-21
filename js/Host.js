@@ -23,7 +23,6 @@ var STATE_READY = 1;
 var STATE_RUNNING = 2;
 var STATE_PAUSED = 3;
 var STATE_FINISHED = 4;
-var game_count = 0;
 
 /**
  * Host to run the given game
@@ -35,10 +34,6 @@ umu.Host = function(game, resources, canvasId, idleMs) {
 	this.canvas = null;
 	
 	this.state = STATE_LOADING;
-	this.id = ++game_count;
-	
-	this.updatePrevTime = 0;
-	this.updateTimeAvg = 0;
 	
 	// Create a local var that references this object,
 	// which we can use inside callbacks
@@ -56,7 +51,7 @@ umu.Host = function(game, resources, canvasId, idleMs) {
 	 * Initializes the game so it's ready to start
 	 */
 	this._init = function(idleMs) {
-		this.timer = new umu.Timer(this, this.update, idleMs);
+		this.timer = new umu.Timer(this.update, idleMs);
 		this.canvas = document.getElementById(canvasId);
 		this.loadingScreen = new umu.ui.LoadingScreen(this.canvas);
 	
@@ -107,16 +102,6 @@ umu.Host = function(game, resources, canvasId, idleMs) {
 		if (typeof host.game.onUpdate === 'function') {
 			host.game.onUpdate(time);
 		}
-		
-		// Calculate smoothed frame update time
-		var updateTime = (new Date()).getTime();
-		if (this.updatePrevTime > 0) {
-			if (this.updateTimeAvg > 0)
-				this.updateTimeAvg = this.updateTimeAvg * 0.95 + (updateTime - this.updatePrevTime) * 0.05;
-			else 
-				this.updateTimeAvg = updateTime - this.updatePrevTime;
-		}
-		this.updatePrevTime = updateTime;
 	};
 	
 	/**
@@ -176,6 +161,7 @@ umu.Host = function(game, resources, canvasId, idleMs) {
 	 * Calulates the smoothed FPS
 	 */
 	this.getFPS = function() {
-		return this.updateTimeAvg == 0 ? 0 : Math.floor(1000 / this.updateTimeAvg);
+		var avg = this.timer.tickTimeAvg;
+		return avg == 0 ? 0 : Math.floor(1000 / avg);
 	};
 };

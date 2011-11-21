@@ -17,48 +17,64 @@
  * Copyright Rowan Seymour 2011
  */
  
+umu.timerCount = 0;
+ 
 /**
  * Class for creating repeated callbacks with some idle time in between
  */
-umu.Timer = function(host, callback, idleMs) {
-	this.host = host;
+umu.Timer = function(callback, idleMs) {
 	this.callback = callback;
 	this.idleMs = idleMs;
+	this.id = ++umu.timerCount;
 	this.timerId = 0;
+	
+	this.tickPrevTime = 0;
+	this.tickTimeAvg = 0;
 
 	// Create a global var that references this object,
 	// which we can use in the setTimeout callback
 	eval("$timer_" + this.id + " = this;");
-	
-	/**
-	 * Starts the timer
-	 */
-	this.start = function() {
-		this._requestNextTick();
-	};
-	
-	/**
-	 * Stops the timer
-	 */
-	this.stop = function() {
-		clearTimeout(this.timerId);
-	};
-	
-	/**
-	 * Request next timer tick after some idle time
-	 */
-	this._requestNextTick = function() {
-		this.timerId = setTimeout("$timer_" + this.id + "._tick()", this.idleMs);
-	};
-	
-	/**
-	 * Called each timer tick
-	 */
-	this._tick = function() {
-		var time = new Date().getTime();
-		this.callback.apply(this.host, [time]);
-		
-		// Request next timer tick
-		this._requestNextTick();
-	};
 }
+
+/**
+ * Starts the timer
+ */
+umu.Timer.prototype.start = function() {
+	this._requestNextTick();
+};
+
+/**
+ * Stops the timer
+ */
+umu.Timer.prototype.stop = function() {
+	clearTimeout(this.timerId);
+};
+
+/**
+ * Request next timer tick after some idle time
+ */
+umu.Timer.prototype._requestNextTick = function() {
+	this.timerId = setTimeout("$timer_" + this.id + "._tick()", this.idleMs);
+};
+
+/**
+ * Called each timer tick
+ */
+umu.Timer.prototype._tick = function() {
+	var time = new Date().getTime();
+	this.callback(time);
+	
+	// Calculate smoothed frame update time
+	var tickTime = (new Date()).getTime();
+	if (this.tickPrevTime > 0) {
+		if (this.tickTimeAvg > 0)
+			this.tickTimeAvg = this.tickTimeAvg * 0.95 + (tickTime - this.tickPrevTime) * 0.05;
+		else 
+			this.tickTimeAvg = tickTime - this.tickPrevTime;
+	}
+	this.tickPrevTime = tickTime;
+	
+	// Request next timer tick
+	this._requestNextTick();
+};
+	
