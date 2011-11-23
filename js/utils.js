@@ -31,8 +31,11 @@ function __extends(clazz, obj, params) {
 }
 
 /**
- * Used to retain a super class method on the __super object
+ * Used to retain a super class method
  */
-function __retain(fname, obj) {
-	eval("obj.super$" + fname + " = obj." + fname);
+function __retains(identifier, obj) {
+	var tokens = identifier.split("$");
+	var clazz = tokens[0];
+	var fname = tokens[1];
+	obj[clazz + "$" + fname] = obj[fname];
 }
