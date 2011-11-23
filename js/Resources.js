@@ -27,33 +27,22 @@ umu.Resources = function() {
 	this.loadedCount = 0;
 	
 	// Create local var for callbacks
-	var resources = this;
-	
-	/**
-	 * Binds a callback to an event on a DOM element, so that it will
-	 * only be called once and will get this loader as an argument
-	 */
-	this._bindEvent = function(elem, name, callback) {
-		return elem.addEventListener(name, function listener() {
-			elem.removeEventListener(name, listener);
-			return callback();
-		}, true);
-	};
+	var self = this;
 	
 	/**
 	 * Called when a resource has been loaded
 	 */
 	this._onResourceLoad = function() {
-		++resources.loadedCount;
+		++self.loadedCount;
 		
 		// Invoke the progress callback with the percentage of resources loaded
-		if (typeof resources.onProgress === 'function') {
-			resources.onProgress(100.0 * resources.loadedCount / resources.count);
+		if (typeof self.onProgress === 'function') {
+			self.onProgress(100.0 * self.loadedCount / self.count);
 		}
 		
 		// Invoke loaded callback if all resources are loaded
-		if (resources.loadedCount == resources.count && typeof resources.onLoaded === 'function') {
-			resources.onLoaded();
+		if (self.loadedCount == self.count && typeof self.onLoaded === 'function') {
+			self.onLoaded();
 		}
 	};
 };
@@ -102,4 +91,15 @@ umu.Resources.prototype.load = function(onLoaded, onProgress) {
 		this._bindEvent(this.audio[key], "canplaythrough", this._onResourceLoad);
 		this.audio[key].load();
 	}
+};
+
+/**
+ * Binds a callback to an event on a DOM element, so that it will
+ * only be called once and will get this loader as an argument
+ */
+umu.Resources.prototype._bindEvent = function(elem, name, callback) {
+	return elem.addEventListener(name, function listener() {
+		elem.removeEventListener(name, listener);
+		return callback();
+	}, true);
 };
