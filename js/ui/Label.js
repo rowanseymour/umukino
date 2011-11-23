@@ -17,13 +17,18 @@
  * Copyright Rowan Seymour 2011
  */
  
-umu.ui.Panel = function(parent, x, y, width, height, fillStyle) {
-	__extends(umu.ui.Component, this, [parent, x, y, width, height]);
+umu.ui.Label = function(parent, x, y, width, height, fillStyle, text) {
+	__extends(umu.ui.Panel, this, [parent, x, y, width, height, fillStyle]);
+	__retains("Panel$draw", this);
 	
-	this.fillStyle = fillStyle;
-	
+	this.text = text;
+
 	this.draw = function(gfx) {
-		gfx.fillStyle = this.fillStyle;
-		gfx.fillRect(0, 0, this.width, this.height);
+		this.Panel$draw(gfx);
+		
+		gfx.textAlign = "center";
+		gfx.textBaseline = "middle";
+		gfx.fillStyle = "#000";
+		gfx.fillText(this.text, this.width / 2, this.height / 2);
 	};
 };

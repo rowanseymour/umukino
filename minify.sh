@@ -3,7 +3,7 @@
 # Minifies the Javascript using the Google Closure Compiler
 #
 # First do simple file concatenation to create 'dev' version...
-# 
+#
 
 cat js/utils.js \
 	js/Vector2.js \
@@ -13,6 +13,7 @@ cat js/utils.js \
 	js/ui/Component.js \
 	js/ui/Screen.js \
 	js/ui/Panel.js \
+	js/ui/Label.js \
 	js/ui/LoadingScreen.js \
 	js/Host.js \
 	> umukino.dev.js
